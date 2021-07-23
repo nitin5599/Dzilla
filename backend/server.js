@@ -1,21 +1,15 @@
 import express from "express";
-// const express = require('express')
-// const dotenv = require('dotenv')
-// const colors = require('colors')
-// const path = require('path')
-// const connectDB = require('./config/db')
-// const noteRoutes = require('./routes/noteRoutes')
-// const userRoutes = require('./routes/userRoutes')
-// const { errorHandler, notFound } = require('./middleware/errorMiddleware')
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import colors from "colors";
 import path from "path";
-
+import cors from 'cors'
 import noteRoutes from "./routes/noteRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
-
+var corsOption ={
+  origin: "http://localhoast:5000/"
+}
 dotenv.config();
 
 connectDB();
@@ -23,6 +17,24 @@ connectDB();
 const app = express(); // main thing
 
 app.use(express.json()); // to accept json data
+// app.use(cors())
+// Enable cors
+// app.use('*', function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*"); // update later
+//   // Allowed headers
+//   res.setHeader(
+//       "Access-Control-Allow-Headers",
+//       "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+
+//   // Allowed request methods
+//   res.setHeader(
+//       "Access-Control-Allow-Methods",
+//       "GET, POST, PUT, DELETE, PATCH"
+//   );
+//   next();
+// });
+
 
 app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
