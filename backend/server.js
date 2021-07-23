@@ -16,7 +16,8 @@ connectDB();
 
 const app = express(); // main thing
 
-app.use(express.json()); // to accept json data
+app.use(express.json());
+app.use(express.urlencoded({urlencoded: true})); // to accept json data
 // app.use(cors())
 // Enable cors
 // app.use('*', function(req, res, next) {
