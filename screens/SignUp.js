@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { 
     View,
     Text,
@@ -9,15 +9,24 @@ import {
     Modal,
     FlatList,
     KeyboardAvoidingView,
-    ScrollView
+    Pressable,
+    ScrollView,
+    Alert
 } from 'react-native'
 import { icons, images, COLORS, SIZES, FONTS} from '../constants'
 import LinearGradient from 'react-native-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
     
+    const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(false)
+    
+    
     const [showPassword, setShowPassword] = React.useState(false)
+    
     // const navigation = useNavigation()
     const [areas, setAreas] = React.useState([])
     const [selectedArea, setSelectedArea] = React.useState(null)
@@ -95,7 +104,55 @@ const SignUp = ({navigation}) => {
         )
     }
 
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [pic, setPic] = useState(
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+    );
+
+    const submitHandler = async(e) => {
+        e.preventDefault();   
+        try {
+            const headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            setLoading(true)
+
+            const user = JSON.stringify({
+                name: name,
+                email: email,
+                password: email,
+                pic: pic
+            })
+
+            fetch('http://10.0.2.2:8081/api/users/', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: email,
+                    pic: pic
+                })
+            })
+            // await axios.post('http://localhost:5000/api/users/', user, config)
+            .then((response) => {
+                console.log('Response - ', response.text())
+              })
+            
+            setLoading(false)
+        } 
+        catch (error) {
+            console.error("getting error - ", error)
+        }
+        // console.log(email, password, name)
+    }
+
     function renderForm() {
+        
         return (
             <View
                 style={{
@@ -118,6 +175,8 @@ const SignUp = ({navigation}) => {
                         placeholder="Enter Name"
                         placeholderTextColor={COLORS.white}
                         selectionColor={COLORS.white}
+                        value={name}
+                        onChangeText={setName}
                     />
                 </View>
 
@@ -137,9 +196,53 @@ const SignUp = ({navigation}) => {
                         placeholder="Enter email"
                         placeholderTextColor={COLORS.white}
                         selectionColor={COLORS.white}
+                        value={email}
+                        onChangeText={setEmail}
                     />
                 </View>
 
+                {/* Password */}
+                
+                <View style={{ marginTop: SIZES.padding * 2 }}>
+                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
+                    <TextInput
+                        style={{
+                            marginVertical: SIZES.padding,
+                            borderBottomColor: COLORS.white,
+                            borderBottomWidth: 1,
+                            height: 40,
+                            color: COLORS.white,
+                            ...FONTS.body3
+                        }}
+                        placeholder="Enter Password"
+                        placeholderTextColor={COLORS.white}
+                        selectionColor={COLORS.white}
+                        secureTextEntry={!showPassword}
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    <TouchableOpacity
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 10,
+                            height: 30,
+                            width: 30
+                        }}
+                        onPress={() => setShowPassword(!showPassword)}
+                    >
+                        <Image
+                            source={showPassword ? icons.disable_eye : icons.eye}
+                            style={{
+                                height: 20,
+                                width: 20,
+                                tintColor: COLORS.white
+                            }}
+                        />
+                    </TouchableOpacity>
+                </View>
+
+                
                 {/* Phone Number */}
                 
                 {/* <View style={{ marginTop: SIZES.padding * 2 }}>
@@ -206,62 +309,34 @@ const SignUp = ({navigation}) => {
                     </View>
                 </View> */}
 
-                {/* Password */}
-                <View style={{ marginTop: SIZES.padding * 2 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
-                    <TextInput
-                        style={{
-                            marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
-                            borderBottomWidth: 1,
-                            height: 40,
-                            color: COLORS.white,
-                            ...FONTS.body3
-                        }}
-                        placeholder="Enter Password"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
-                        secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity
-                        style={{
-                            position: 'absolute',
-                            right: 0,
-                            bottom: 10,
-                            height: 30,
-                            width: 30
-                        }}
-                        onPress={() => setShowPassword(!showPassword)}
-                    >
-                        <Image
-                            source={showPassword ? icons.disable_eye : icons.eye}
-                            style={{
-                                height: 20,
-                                width: 20,
-                                tintColor: COLORS.white
-                            }}
-                        />
-                    </TouchableOpacity>
-                </View>
+                
             </View>
         )
     }
 
     function renderButton() {
         return (
-            <View style={{ margin: SIZES.padding * 3 }}>
-                <TouchableOpacity
-                    style={{
-                        height: 60,
-                        backgroundColor: COLORS.black,
-                        borderRadius: SIZES.radius / 1.5,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                    onPress={() => navigation.navigate("Stores")}
-                >
-                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
-                </TouchableOpacity>
+            <View style={{marginVertical: SIZES.padding * 3,
+             marginHorizontal: SIZES.padding * 6}}>
+                <Pressable 
+                    onPress={submitHandler} 
+                    style={{ height: 60,
+                            backgroundColor: COLORS.black,
+                            borderRadius: SIZES.radius / 1.5,
+                            alignItems: 'center',
+                            justifyContent: 'center' }}>
+                    {/* <TouchableOpacity
+                        style={{
+                            height: 60,
+                            backgroundColor: COLORS.black,
+                            borderRadius: SIZES.radius / 1.5,
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    > */}
+                        <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
+                    {/* </TouchableOpacity> */}
+                </Pressable>
             </View>
         )
     }

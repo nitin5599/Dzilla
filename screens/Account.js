@@ -141,7 +141,7 @@ const Account = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'white'
+      backgroundColor: '#fff9e8'
     },
     userInfoSection: {
       paddingHorizontal: 30,
