@@ -38,10 +38,13 @@ const location = require("../assets/icons/location.png");
 const support = require("../assets/icons/support.png");
 const fav = require("../assets/icons/fav.png");
 const mail = require("../assets/icons/mail.png");
+const logout = require("../assets/icons/logout.png");
+
 
 
 export default {
     back,
+    logout,
     mail,
     settings,
     share,

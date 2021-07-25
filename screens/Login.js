@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { 
     View,
     Text,
@@ -9,13 +9,19 @@ import {
     Modal,
     FlatList,
     KeyboardAvoidingView,
-    ScrollView
+    ScrollView,
+    Alert
 } from 'react-native'
 import { icons, images, COLORS, SIZES, FONTS} from '../constants'
 import LinearGradient from 'react-native-linear-gradient'
+import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
     
+    
+    const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
 
     const [areas, setAreas] = React.useState([])
@@ -94,6 +100,55 @@ const SignUp = ({navigation}) => {
         )
     }
 
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const submitHandler = async(e) => {
+        e.preventDefault();   
+        if(email && password){
+            try {
+
+                const headers = {
+                    'Content-Type': 'application/json'
+                }
+
+                setLoading(true)
+
+                const user = JSON.stringify({
+                    email: email,
+                    password: password
+                })
+
+                const config = {
+                    method: 'POST',
+                    headers: headers,
+                    body: user
+                }
+
+                const response =  await fetch('https://dzilla.herokuapp.com/api/users/login', config)
+                const data = await response.json();
+                
+                if(data.message === 'Invalid Credentials!'){
+                    Alert.alert('Alert', data.message)
+                }
+                else{
+                    AsyncStorage.setItem('token', data.token)
+                    const key =  await AsyncStorage.getItem('token');
+                    if(key)
+                        navigation.navigate('Stores')
+                }
+
+                setLoading(false)
+            } 
+            catch (error) {
+                console.error("getting error - ", error)
+            }
+        }
+        else{
+            Alert.alert('Alert', 'invalid credentials')
+        }
+    }
+
     function renderForm() {
         return (
             <View
@@ -102,24 +157,7 @@ const SignUp = ({navigation}) => {
                     marginHorizontal: SIZES.padding * 3,
                 }}
             >
-                {/* Full Name */}
-                {/* <View style={{ marginTop: SIZES.padding * 3 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Full Name</Text>
-                    <TextInput
-                        style={{
-                            marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
-                            borderBottomWidth: 1,
-                            height: 40,
-                            color: COLORS.white,
-                            ...FONTS.body3
-                        }}
-                        placeholder="Enter Full Name"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
-                    />
-                </View> */}
-
+               
                 {/* Email */}
 
                 <View style={{ marginTop: SIZES.padding * 3 }}>
@@ -136,7 +174,50 @@ const SignUp = ({navigation}) => {
                         placeholder="Enter email"
                         placeholderTextColor={COLORS.white}
                         selectionColor={COLORS.white}
+                        value={email}
+                        onChangeText={setEmail}
                     />
+                </View>
+
+                {/* Password */}
+
+                <View style={{ marginTop: SIZES.padding * 2 }}>
+                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
+                    <TextInput
+                        style={{
+                            marginVertical: SIZES.padding,
+                            borderBottomColor: COLORS.white,
+                            borderBottomWidth: 1,
+                            height: 40,
+                            color: COLORS.white,
+                            ...FONTS.body3
+                        }}
+                        placeholder="Enter Password"
+                        placeholderTextColor={COLORS.white}
+                        selectionColor={COLORS.white}
+                        secureTextEntry={!showPassword}
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    <TouchableOpacity
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 10,
+                            height: 30,
+                            width: 30
+                        }}
+                        onPress={() => setShowPassword(!showPassword)}
+                    >
+                        <Image
+                            source={showPassword ? icons.disable_eye : icons.eye}
+                            style={{
+                                height: 20,
+                                width: 20,
+                                tintColor: COLORS.white
+                            }}
+                        />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Phone Number */}
@@ -205,43 +286,6 @@ const SignUp = ({navigation}) => {
                     </View>
                 </View> */}
 
-                {/* Password */}
-                <View style={{ marginTop: SIZES.padding * 2 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
-                    <TextInput
-                        style={{
-                            marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
-                            borderBottomWidth: 1,
-                            height: 40,
-                            color: COLORS.white,
-                            ...FONTS.body3
-                        }}
-                        placeholder="Enter Password"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
-                        secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity
-                        style={{
-                            position: 'absolute',
-                            right: 0,
-                            bottom: 10,
-                            height: 30,
-                            width: 30
-                        }}
-                        onPress={() => setShowPassword(!showPassword)}
-                    >
-                        <Image
-                            source={showPassword ? icons.disable_eye : icons.eye}
-                            style={{
-                                height: 20,
-                                width: 20,
-                                tintColor: COLORS.white
-                            }}
-                        />
-                    </TouchableOpacity>
-                </View>
             </View>
         )
     }
@@ -250,6 +294,7 @@ const SignUp = ({navigation}) => {
         return (
             <View style={{ margin: SIZES.padding * 3 }}>
                 <TouchableOpacity
+                    onPress={submitHandler}
                     style={{
                         height: 60,
                         backgroundColor: COLORS.black,
@@ -257,7 +302,6 @@ const SignUp = ({navigation}) => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
-                    onPress={() => navigation.navigate("Home")}
                 >
                     <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Login</Text>
                 </TouchableOpacity>

@@ -16,7 +16,6 @@ import {
 import { icons, images, COLORS, SIZES, FONTS} from '../constants'
 import LinearGradient from 'react-native-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
@@ -107,48 +106,52 @@ const SignUp = ({navigation}) => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [pic, setPic] = useState(
-        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-    );
+    const [pic, setPic] = useState("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
 
     const submitHandler = async(e) => {
         e.preventDefault();   
-        try {
-            const headers = {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            }
+        if(name && email && password){
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                }
 
-            setLoading(true)
+                setLoading(true)
 
-            const user = JSON.stringify({
-                name: name,
-                email: email,
-                password: email,
-                pic: pic
-            })
-
-            fetch('http://10.0.2.2:8081/api/users/', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    password: email,
-                    pic: pic
+                const user = JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    pic
                 })
-            })
-            // await axios.post('http://localhost:5000/api/users/', user, config)
-            .then((response) => {
-                console.log('Response - ', response.text())
-              })
-            
-            setLoading(false)
-        } 
-        catch (error) {
-            console.error("getting error - ", error)
+                
+                const config = {
+                    method: 'POST',
+                    headers: headers,
+                    body: user
+                }
+
+                const response =  await fetch('https://dzilla.herokuapp.com/api/users/', config)
+                const data = await response.json();
+               
+                if(data.message === 'User already exists'){
+                    Alert.alert('Please login', data.message)
+                }
+                else{
+                    AsyncStorage.setItem('token', data.token)
+                    const key =  await AsyncStorage.getItem('token');
+                    if(key)
+                        navigation.navigate('Stores')
+                }
+
+                setLoading(false)
+            } 
+            catch (error) {
+                console.error("getting error - ", error)
+            }
+        }else{
+            Alert.alert('Alert', 'invalid credentials')
         }
-        // console.log(email, password, name)
     }
 
     function renderForm() {
@@ -318,25 +321,18 @@ const SignUp = ({navigation}) => {
         return (
             <View style={{marginVertical: SIZES.padding * 3,
              marginHorizontal: SIZES.padding * 6}}>
-                <Pressable 
+                <TouchableOpacity
                     onPress={submitHandler} 
-                    style={{ height: 60,
-                            backgroundColor: COLORS.black,
-                            borderRadius: SIZES.radius / 1.5,
-                            alignItems: 'center',
-                            justifyContent: 'center' }}>
-                    {/* <TouchableOpacity
-                        style={{
-                            height: 60,
-                            backgroundColor: COLORS.black,
-                            borderRadius: SIZES.radius / 1.5,
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    > */}
-                        <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
-                    {/* </TouchableOpacity> */}
-                </Pressable>
+                    style={{
+                        height: 60,
+                        backgroundColor: COLORS.black,
+                        borderRadius: SIZES.radius / 1.5,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
+                </TouchableOpacity>
             </View>
         )
     }

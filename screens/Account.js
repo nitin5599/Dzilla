@@ -10,10 +10,11 @@ import {
 
 import Share from 'react-native-share';
 import files from "../constants/filebase64";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { COLORS, icons, images } from "../constants"
 
-const Account = () => {
+const Account = ({navigation}) => {
 
     const myCustomShare = async () => {
         const shareOptions = {
@@ -28,6 +29,23 @@ const Account = () => {
           console.log('Error => ', error);
         }
     };
+
+    const handleLogout = async () => {
+        try {
+            const keyValue = await AsyncStorage.removeItem('token')
+            // console.log("TOKEN 1 - ", await AsyncStorage.getItem('token'))
+            // then(() =>{
+                if(keyValue == null){
+                    AsyncStorage.setItem('token', 'token')
+                }
+                // console.log("TOKEN 2 - ", await AsyncStorage.getItem('token'))
+                navigation.navigate('Login')
+            // })
+        }
+        catch(error){
+            console.log(error)
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -128,6 +146,13 @@ const Account = () => {
                     <View style={[styles.menuItem, {paddingHorizontal: 30}]}>
                         <Image source={icons.settings} color="#FF6347" style={{width:25, height:25}}/>
                         <Text style={[styles.menuItemText, {paddingHorizontal: 0}]}>Settings</Text>
+                    </View>
+                </TouchableRipple>
+                
+                <TouchableRipple onPress={handleLogout}>
+                    <View style={[styles.menuItem, {paddingHorizontal: 30}]}>
+                        <Image source={icons.logout} color="#FF6347" style={{width:25, height:25}}/>
+                        <Text style={[styles.menuItemText, {paddingHorizontal: 0}]}>Logout</Text>
                     </View>
                 </TouchableRipple>
             
