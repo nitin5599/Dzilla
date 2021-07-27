@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { 
     View,
     Text,
@@ -8,13 +8,28 @@ import {
     SafeAreaView,
     FlatList,
     StyleSheet,
-    Pressable
+    Pressable,
+    Animated,
+    ActivityIndicator,
+    RefreshControl
  } from 'react-native'
-
 import { COLORS, icons, images, FONTS, SIZES, data, dummyData } from "../constants"
 import { CategoryCard, TrendingCard,  } from "../components";
 
 const Stores = ({navigation}) => {
+
+    const [refresh, setRefresh] = useState(false)
+
+    const onRefresh = () => {
+        setRefresh(true)        
+        ListCategories()
+        // fetch('https://dzilla.herokuapp.com/api/product/')
+        //   .then((response) => response.json())
+        //   .then((json) => {setDataList(json), ListCategories()})
+        //   .catch((error) => console.error(error))
+        //   .finally(() => setLoading(false));
+        setRefresh(false)        
+    }
 
     const categoriesData = [
         {
@@ -225,11 +240,11 @@ const Stores = ({navigation}) => {
                 
                 <TextInput
                     style={{
-                        marginLeft: SIZES.radius,
+                        marginLeft: SIZES.radius*4,
                         ...FONTS.body2
                     }}
                     placeholderTextColor={COLORS.gray}
-                    placeholder="Search"
+                    placeholder="Search for a shop"
                 />
             </View>
         )
@@ -422,71 +437,86 @@ const Stores = ({navigation}) => {
 
     const categoryList = [
         {
+            id:1,
             status:'All'
         },
         {
+            id:2,
             status:'Visited'
         },
         {
+            id:3,
             status:'Favorites'
         }
     ];
+
     
-    const DATA = [
-        {
-            id:'1',
-            name: 'Ajio',
-            image: images.ajio,
-            cashback:'12.0%',
-            category: 'Home, Garden & Decoration',
-            status: 'All' 
-        },
-        {
-            id:'2',
-            name: 'Myntra',
-            image: images.myntra,
-            category: 'Clothing & Shoes',
-            cashback:'8.6%',
-            status: 'All' 
-        },
-        {
-            id:'3',
-            name: 'Zivame',
-            image: images.zivame,
-            cashback:'8.0%',
-            category: 'Clothing & Shoes, Jewellry & Accessories',
-            status: 'Visited' 
-        },
-        {
-            id:'4',
-            name: 'Limeroad',
-            image: images.limeroad,
-            category: 'Marketplaces',
-            cashback:'12.6%',
-            status: 'Favorites' 
-        },
-    ]
+    // const DATA = [
+    //     {
+    //         id:'1',
+    //         name: 'Ajio',
+    //         image: images.ajio,
+    //         cashback:'12.0%',
+    //         category: 'Home, Garden & Decoration',
+    //         status: 'All' 
+    //     },
+    //     {
+    //         id:'2',
+    //         name: 'Myntra',
+    //         image: images.myntra,
+    //         category: 'Clothing & Shoes',
+    //         cashback:'8.6%',
+    //         status: 'All' 
+    //     },
+    //     {
+    //         id:'3',
+    //         name: 'Zivame',
+    //         image: images.zivame,
+    //         cashback:'8.0%',
+    //         category: 'Clothing & Shoes, Jewellry & Accessories',
+    //         status: 'Visited' 
+    //     },
+    //     {
+    //         id:'4',
+    //         name: 'Limeroad',
+    //         image: images.limeroad,
+    //         category: 'Marketplaces',
+    //         cashback:'12.6%',
+    //         status: 'Favorites' 
+    //     },
+    // ]
 
         
     const [status, setStatus] = useState('All')
-    const [datalist, setDataList] = useState(DATA);
+    const [datalist, setDataList] = useState([]);
+    
+    const [isLoading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        // setLoading(true)
+        fetch('https://dzilla.herokuapp.com/api/product/')
+          .then((response) => response.json())
+          .then((json) => {setDataList(json), ListCategories()})
+          .catch((error) => console.error(error))
+          .finally(() => setLoading(false));
+    }, [status]);
     
     const ListCategories = () => {
 
         const setDataFilter = status => {
-            if(status == 'All'){
-                setDataList([...DATA.filter(e => e.status === status)])
+            // if(status == 'All'){
+                setDataList([...datalist.filter(e => e.status === status)])
                 // console.log(status)
-            }
-            else if(status == 'Visited'){
-                setDataList([...DATA.filter(e => e.status === status)])
-                // console.log(status)
-            }
-            else if(status == 'Favorites'){
-                setDataList([...DATA.filter(e => e.status === status)])
-                // console.log(status)
-            }
-            setStatus(status)
+            // }
+            // else if(status == 'Visited'){
+            //     setDataList([...datalist.filter(e => e.status === status)])
+            //     // console.log(status)
+            // }
+            // else if(status == 'Favorites'){
+            //     setDataList([...datalist.filter(e => e.status === status)])
+            //     // console.log(status)
+            // }
+            // setStatus(status)
         }
     
         // const [selectedCategoryIndex, setSelectedCategoryIndex] = useState('All');
@@ -494,8 +524,8 @@ const Stores = ({navigation}) => {
         <View style={styles.categoryListContainer}>
             {categoryList.map((e) => (
             <Pressable
-                key={e.status}
-                onPress={() => setDataFilter(e.status)}>
+                key={e.id}
+                onPress={() => {setStatus(e.status), setDataFilter(e.status)}}>
                 <Text
                 style={[
                     styles.categoryListText,
@@ -519,7 +549,7 @@ const Stores = ({navigation}) => {
                     marginHorizontal: SIZES.padding
                 }}
                 categoryItem={item}
-                onPress={() => navigation.navigate('this product', item)}
+                onPress={() => navigation.navigate('webView')}
             />
         )
     }
@@ -531,7 +561,18 @@ const Stores = ({navigation}) => {
                 backgroundColor: COLORS.white
             }}
         >
-            <FlatList
+        {isLoading ? 
+            <View style={[styles.container, styles.horizontal]}>
+                <ActivityIndicator size="small" color="#0000ff" />
+            </View>
+             :  
+            (<FlatList
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refresh}
+                        onRefresh={onRefresh}
+                    />
+                }
                 data={datalist}
                 keyExtractor={item => `${item.id}`}
                 keyboardDismissMode='on-drag'
@@ -574,8 +615,8 @@ const Stores = ({navigation}) => {
                 ListFooterComponent={
                     <View style={{marginBottom:120}}/>
                 }
-            />
-
+            />)
+        }
         </SafeAreaView>
     )
 }
@@ -624,7 +665,15 @@ const styles = StyleSheet.create({
     //   marginHorizontal: 25,
       fontSize: 18,
     },
-
+    container: {
+        flex: 1,
+        justifyContent: "center"
+    },
+    horizontal: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 10
+    }
 })
 
 export default Stores

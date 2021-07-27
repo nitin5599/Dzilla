@@ -7,5 +7,6 @@ import Stores from "./Stores";
 import Invite from "./Invite";
 import Account from "./Account";
 import Bookmark from "./Bookmark";
+import webView from './webView';
 
-export {Home, Bookmark, SignUp, Login, Stores, Invite, Account}
+export {Home, Bookmark, SignUp, Login, Stores, Invite, Account, webView}

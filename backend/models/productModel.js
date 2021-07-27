@@ -18,6 +18,9 @@ const productSchema = new mongoose.Schema({
     fileName:{
         type: String,
         required: true
+    },
+    status:{
+        type: String
     }
 }, { timestamps: true });
 

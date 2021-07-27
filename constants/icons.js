@@ -36,7 +36,8 @@ const settings = require("../assets/icons/settings.png");
 const share = require("../assets/icons/share.png");
 const location = require("../assets/icons/location.png");
 const support = require("../assets/icons/support.png");
-const fav = require("../assets/icons/fav.png");
+const heart = require("../assets/icons/heart.png");
+const heartFilled = require("../assets/icons/heart-filled.png");
 const mail = require("../assets/icons/mail.png");
 const logout = require("../assets/icons/logout.png");
 
@@ -49,7 +50,8 @@ export default {
     settings,
     share,
     location,
-    fav,
+    heart,
+    heartFilled,
     support,
     refer,
     bell,

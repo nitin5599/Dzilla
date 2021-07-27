@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { 
     View,
     Text,
@@ -6,15 +6,25 @@ import {
     Image,
     TextInput,
     SafeAreaView,
-    FlatList
+    FlatList,
+    StyleSheet
  } from 'react-native'
 
- import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
+import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 
+import LottieView from "lottie-react-native";
+ 
 const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
+    
+    const [isFav, setIsFav] = React.useState(false)
+
+    useEffect(() => {
+        
+    }, [isFav])
+
     return (
         <TouchableOpacity
-            key={categoryItem.id}
+            key={categoryItem._id}
             style={{
                 flexDirection:'row',
                 alignItems:'center',
@@ -30,7 +40,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
             {/* Image */}
 
             <Image
-                source={categoryItem.image}
+                source={{uri: categoryItem.fileName}}
                 resizeMode='contain'
                 
                 style={{
@@ -44,8 +54,8 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
 
             <View
                 style={{
-                    width:'55%',
-                    paddingHorizontal:40,
+                    width:'45%',
+                    paddingHorizontal:30,
                     alignItems: 'flex-start'
                 }}
             >
@@ -69,7 +79,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                         
                     }}
                 >
-                    {categoryItem.category}
+                    {categoryItem.description}
                 </Text>
             </View>
             
@@ -77,18 +87,16 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
             
             <View
                 style={{
-                    // width:'25%',
-                    // paddingHorizontal:25,
+                    width:'20%',
                     alignItems: 'flex-start'
                 }}
             >
                 <Text
                     style={{
-                        // flex:1,
                         ...FONTS.h2
                     }}
                 >
-                    {categoryItem.cashback}
+                    {categoryItem.cashback+'%'}
                 </Text>
 
                 <Text
@@ -100,8 +108,43 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                     cashback
                 </Text>
             </View>
+
+            <View style={{
+                    width:'5%',
+                    alignItems: 'flex-start'
+                }}>  
+                <TouchableOpacity
+                    onPress={()=>setIsFav(!isFav)}
+                >
+                    <Image source={isFav ? icons.heartFilled : icons.heart} 
+                        style={{
+                            width:25,
+                            height:25,
+                            tintColor:'#df245e'
+                        }}                        
+                    />
+                </TouchableOpacity>              
+            </View>
+            
+
         </TouchableOpacity>
     )
 }
+
+const styles = StyleSheet.create({
+    heart: {
+        width: 20,
+        height: 20,
+        tintColor: "#6e7f8d",
+      },
+      heartFilled: {
+        tintColor: "#df245e",
+      },
+      heartLottie: {
+        width: 50,
+        height: 50,
+        marginLeft: -5,
+      },
+})
 
 export default CategoryCard

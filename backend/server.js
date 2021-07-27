@@ -4,7 +4,6 @@ import connectDB from "./config/db.js";
 import colors from "colors";
 import path from "path";
 import cors from 'cors'
-import noteRoutes from "./routes/noteRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -23,6 +22,7 @@ app.use(express.json()); // to accept json data
 // Add Access Control Allow Origin headers
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -30,7 +30,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/product", productRoutes);
