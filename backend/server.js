@@ -16,7 +16,7 @@ connectDB();
 const app = express(); // main thing
 
 app.use(express.json()); // to accept json data
-// app.use(cors())
+// app.use(cors({origin: true, credentials: true}))
 
 
 // Add Access Control Allow Origin headers

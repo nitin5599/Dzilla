@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { 
     View,
     Text,
@@ -12,14 +12,84 @@ import {
     ScrollView,
     Alert
 } from 'react-native'
+import axios from 'axios'; 
 import { icons, images, COLORS, SIZES, FONTS} from '../constants'
 import LinearGradient from 'react-native-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {  GoogleSignin,
+    GoogleSigninButton,
+    statusCodes, } from '@react-native-google-signin/google-signin';
+import { isEmpty } from 'lodash';
 
 const SignUp = ({navigation}) => {
     
+    const [user, setuser] = useState({});
     
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '113035076335-kkr3lf5t2953fhc69htrcbl3b63d83c8.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+            offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+            forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
+        });
+        isSignedIn();
+    }, [])
+
+    const signIn = async() => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log('due___', userInfo)
+            setuser(userInfo);
+        } catch (error) {
+            console.log('error message___ ', error.message)
+                if(error.code === statusCodes.SIGN_IN_CANCELLED){
+                    console.log('user cancelled login flow')
+                }else if(error.code === statusCodes.IN_PROGRESS){
+                    console.log('user signing in....')
+                }else if(error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE){
+                    console.log('google play services not available')
+                }else{
+                    console.log('some other error!')
+                }
+            }
+        }
+
+    const isSignedIn = async () => {
+        const isSignedIn = await GoogleSignin.isSignedIn();
+        if(!!isSignedIn){
+            getCurrentUserInfo()
+        }else{
+            console.log('Please login!')
+        }
+    }
+
+    const getCurrentUserInfo = async()=>{
+        try {
+            const userInfo = await GoogleSignin.signInSilently();
+            console.log('edit__', user);
+            setuser(userInfo)
+        } catch (error) {
+            if(error.code === statusCodes.SIGN_IN_REQUIRED){
+                Alert.alert('User has not Signed in yet!')
+                console.log('User has not Signed in yet!')
+            }else{
+                Alert.alert('something went wrong!')
+                console.log('something went wrong!')
+            }
+        }
+    }
+
+    const signOut = async() => {
+        try {
+            await GoogleSignin.revokeAccess()
+            await GoogleSignin.signOut()
+            setuser({})
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
@@ -27,31 +97,6 @@ const SignUp = ({navigation}) => {
     const [areas, setAreas] = React.useState([])
     const [selectedArea, setSelectedArea] = React.useState(null)
     const [modalVisible, setModalVisible] = React.useState(false)
-
-    // React.useEffect(() => {
-    //     fetch("https://restcountries.eu/rest/v2/all")
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             let areaData = data.map(item => {
-    //                 return {
-    //                     code: item.alpha2Code,
-    //                     name: item.name,
-    //                     callingCode: `+${item.callingCodes[0]}`,
-    //                     flag: `https://www.countryflags.io/${item.alpha2Code}/flat/64.png`
-    //                 }
-    //             })
-
-    //             setAreas(areaData)
-
-    //             if (areaData.length > 0) {
-    //                 let defaultData = areaData.filter(a => a.code == "US")
-
-    //                 if (defaultData.length > 0) {
-    //                     setSelectedArea(defaultData[0])
-    //                 }
-    //             }
-    //         })
-    // }, [])
 
     function renderHeader() {
         return (
@@ -100,8 +145,40 @@ const SignUp = ({navigation}) => {
         )
     }
 
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = () => {
+        try {
+            AsyncStorage.getItem('UserData')
+                .then(value => {
+                    if (value != null) {
+                        navigation.navigate('Stores');
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const [name, setName] = useState('')
+    const [pic, setPic] = useState("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loginData, setLoginData] = useState([])
+
+    useEffect(async() => {
+        if(loginData){
+            axios.get('https://dzilla.herokuapp.com/api/users/')
+            .then(response => {
+                console.log('ALL USERS DATA - ',response.data)
+            })
+            .catch((error) => {
+                console.log('ERROR - ', error);
+            })
+        }
+    }, [loginData])
 
     const submitHandler = async(e) => {
         e.preventDefault();   
@@ -120,23 +197,87 @@ const SignUp = ({navigation}) => {
                 })
 
                 const config = {
-                    method: 'POST',
+                    // method: 'POST',
                     headers: headers,
                     body: user
                 }
-
-                const response =  await fetch('https://dzilla.herokuapp.com/api/users/login', config)
-                const data = await response.json();
                 
-                if(data.message === 'Invalid Credentials!'){
-                    Alert.alert('Alert', data.message)
-                }
-                else{
-                    AsyncStorage.setItem('token', data.token)
-                    const key =  await AsyncStorage.getItem('token');
-                    if(key)
-                        navigation.navigate('Stores')
-                }
+                
+                await axios.post('https://dzilla.herokuapp.com/api/users/login' , user, {headers: headers})
+                .then((res)=>{     
+                    console.log('LOGIN RESPONSE - ', res.data) 
+                    setLoginData(res.data)                   
+                }).catch(err=>{
+                    console.log(err)
+                })
+
+                // const callUserData = await axios.get('http://localhost:5000/api/users/')
+                // const data = await callUserData.data;
+                // console.log(data)
+                //     .then(response => {
+                //         console.log('USERS DATA - ', response.data)                     
+                // })
+                
+                // const callUserData = () => {
+                //    fetch('http://localhost:5000/api/users/')
+                //     .then((res) => {
+                //         console.log('USERDATA - ', res.json());                            
+                //     })
+                // }
+
+                // fetch('https://dzilla.herokuapp.com/api/users/login', config)
+                // .then((response) => response.json())
+                // .then(
+                // //     (json) => {
+                // //   console.log('LOGIN RESPONSE', json)
+                //   callUserData()
+                // // }
+                // )
+                
+                // const response =  await fetch('https://dzilla.herokuapp.com/api/users/login', config)
+                // const data = await response.json();
+                
+                // if(data.message === 'Invalid Credentials!'){
+                //     Alert.alert('Alert', data.message)
+                // }
+                // else{
+                //     try {
+                        // const existingUser = await AsyncStorage.getItem('UserData')
+                        // if(existingUser.email === email)
+                        // {
+                        //     const userdata = {
+                        //         ...existingUser
+                        //     }    
+                        //     await AsyncStorage.setItem('UserData', JSON.stringify(userdata));
+                        //     navigation.navigate('Stores');
+                        // }
+                        // else{
+                            // const userRes = await axios.get('http://localhost:5000/api/users')
+                            // const userdata = await userRes.json();
+                            // .then(response => {
+                                // console.log(userdata)
+                                // setItems(response.data)
+                                // setSuccessMsg('Category successfully updated')                      
+                            // })
+                            // fetch('http://localhost:5000/api/users/')
+                            // .then((res) => {
+                            //     console.log(res.json());                            
+                            // })
+                        // }
+                        // const userdata = {
+                        //     email: email,
+                        //     pic: pic,
+                        //     token: data.token
+                        // }                       
+                
+                    // } catch (error) {
+                    //     console.log('some error - ', error);
+                    // }
+                    // AsyncStorage.setItem('token', data.token)
+                    // const key =  await AsyncStorage.getItem('token');
+                    // if(key)
+                    //     navigation.navigate('Stores')
+                // }
 
                 setLoading(false)
             } 
@@ -220,72 +361,6 @@ const SignUp = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Phone Number */}
-
-                {/* <View style={{ marginTop: SIZES.padding * 2 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Phone Number</Text>
-
-                    <View style={{ flexDirection: 'row' }}> */}
-
-                        {/* Country Code */}
-                    
-                        {/* <TouchableOpacity
-                            style={{
-                                width: 100,
-                                height: 50,
-                                marginHorizontal: 5,
-                                borderBottomColor: COLORS.white,
-                                borderBottomWidth: 1,
-                                flexDirection: 'row',
-                                ...FONTS.body2
-                            }}
-                            onPress={() => setModalVisible(true)}
-                        >
-                            <View style={{ justifyContent: 'center' }}>
-                                <Image
-                                    source={icons.down}
-                                    style={{
-                                        width: 10,
-                                        height: 10,
-                                        tintColor: COLORS.white
-                                    }}
-                                />
-                            </View>
-                            <View style={{ justifyContent: 'center', marginLeft: 5 }}>
-                                <Image
-                                    source={{ uri: selectedArea?.flag }}
-                                    resizeMode="contain"
-                                    style={{
-                                        width: 30,
-                                        height: 30
-                                    }}
-                                />
-                            </View>
-
-                            <View style={{ justifyContent: 'center', marginLeft: 5 }}>
-                                <Text style={{ color: COLORS.white, ...FONTS.body3 }}>{selectedArea?.callingCode}</Text>
-                            </View>
-                        </TouchableOpacity> */}
-
-                        {/* Number */}
-
-                        {/* <TextInput
-                            style={{
-                                flex: 1,
-                                marginVertical: SIZES.padding,
-                                borderBottomColor: COLORS.white,
-                                borderBottomWidth: 1,
-                                height: 40,
-                                color: COLORS.white,
-                                ...FONTS.body3
-                            }}
-                            placeholder="Enter Phone Number"
-                            placeholderTextColor={COLORS.white}
-                            selectionColor={COLORS.white}
-                        />
-                    </View>
-                </View> */}
-
             </View>
         )
     }
@@ -305,6 +380,27 @@ const SignUp = ({navigation}) => {
                 >
                     <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Login</Text>
                 </TouchableOpacity>
+            </View>
+        )
+    }
+
+    function renderGoogleLogin() {
+        return (
+            <View style={{ margin: SIZES.padding * 3 }}>
+                <View style={{alignItems:'center', justifyContent:'center',flex:1}}>
+                    {
+                        !user.idToken ? 
+                        <GoogleSigninButton
+                            style={{width: 215, height: 58}}
+                            size={GoogleSigninButton.Size.Wide}
+                            color={GoogleSigninButton.Color.Light}
+                            onPress={signIn}
+                        /> :
+                        <TouchableOpacity onPress={signOut}>
+                            <Text>Sign Out</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
             </View>
         )
     }
@@ -393,6 +489,11 @@ const SignUp = ({navigation}) => {
                             <Text style={{ color: COLORS.white, ...FONTS.h4 }}>Not a member? Sign Up</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={{ margin: SIZES.padding * 2, alignItems:'center' }}>
+                        <Text style={{ color: COLORS.white, ...FONTS.h4 }}>
+                        OR</Text>
+                    </View>
+                    {renderGoogleLogin()}
                 </ScrollView>
             </LinearGradient>
             {/* {renderAreaCodesModal()} */}

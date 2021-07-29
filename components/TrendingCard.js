@@ -21,6 +21,7 @@ const RecipeCardDetails = ({recipeItem}) => {
                 flex:1,
                 padding:5
             }}
+
         >
             {/* Name & Bookmark*/}
 
@@ -111,6 +112,7 @@ const TrendingCard = ({containerStyle, recipeItem, onPress}) => {
                 ...containerStyle
             }}
             onPress={onPress}
+            key={recipeItem.id}
         >
             {/* Item image */}
 
@@ -123,36 +125,6 @@ const TrendingCard = ({containerStyle, recipeItem, onPress}) => {
                     borderRadius: SIZES.radius
                 }}
             />
-
-            {/* category */}
-
-            {/* <View
-                style={{
-                    position:'absolute',
-                    top:20,
-                    left:15,
-                    paddingHorizontal: SIZES.radius,
-                    paddingVertical: 5,
-                    backgroundColor: COLORS.transparentGray,
-                    borderRadius: SIZES.radius
-                }}
-            >
-                <Text
-                    style={{
-                        color: COLORS.white,
-                        ...FONTS.h4
-                    }}
-                >
-                    {recipeItem.category}
-                </Text>
-            </View> */}
-
-            {/* Card Info */}
-
-            {/* <RecipeCardInfo
-                recipeItem={recipeItem}
-            /> */}
-
         </TouchableOpacity>
     )
 }

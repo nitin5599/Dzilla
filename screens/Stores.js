@@ -10,142 +10,56 @@ import {
     StyleSheet,
     Pressable,
     Animated,
+    Alert,
     ActivityIndicator,
     RefreshControl
  } from 'react-native'
-import { COLORS, icons, images, FONTS, SIZES, data, dummyData } from "../constants"
+import { COLORS, icons, images, FONTS, SIZES } from "../constants"
 import { CategoryCard, TrendingCard,  } from "../components";
+import { trendingOffers } from '../constants/trendingOffers'
 
 const Stores = ({navigation}) => {
 
-    const [refresh, setRefresh] = useState(false)
+    // const [refresh, setRefresh] = useState(false)
 
-    const onRefresh = () => {
-        setRefresh(true)        
-        ListCategories()
-        // fetch('https://dzilla.herokuapp.com/api/product/')
-        //   .then((response) => response.json())
-        //   .then((json) => {setDataList(json), ListCategories()})
-        //   .catch((error) => console.error(error))
-        //   .finally(() => setLoading(false));
-        setRefresh(false)        
-    }
-
-    const categoriesData = [
-        {
-            id: 1,
-            icon: icons.marketplaces,
-            // color: COLORS.purple,
-            // backgroundColor: COLORS.lightpurple,
-            description: "Market Places"
-        },
-        {
-            id: 2,
-            icon: icons.electronics,
-            // color: COLORS.yellow,
-            backgroundColor: COLORS.lightyellow,
-            description: "Electronics"
-        },
-        {
-            id: 3,
-            icon: icons.clothing,
-            // color: COLORS.primary,
-            backgroundColor: COLORS.lightGreen,
-            description: "Clothing"
-        },
-        {
-            id: 4,
-            icon: icons.decor,
-            // color: COLORS.red,
-            backgroundColor: COLORS.lightRed,
-            description: "Home Decor"
-        },
-        {
-            id: 5,
-            icon: icons.sports,
-            // color: COLORS.yellow,
-            backgroundColor: COLORS.lightyellow,
-            description: "Sports"
-        },
-        {
-            id: 6,
-            icon: icons.books,
-            // color: COLORS.primary,
-            backgroundColor: COLORS.lightGreen,
-            description: "Books"
-        },
-        {
-            id: 7,
-            icon: icons.fitness,
-            // color: COLORS.red,
-            backgroundColor: COLORS.lightRed,
-            description: "Fitness"
-        },
-        {
-            id: 8,
-            icon: icons.more,
-            // color: COLORS.purple,
-            backgroundColor: COLORS.lightpurple,
-            description: "More"
-        },
-    ]
-     
+    const [status, setStatus] = useState('All')
+    const [datalist, setDataList] = useState([]);
     
-    // const [features, setFeatures] = useState(categoriesData)
+    const [isLoading, setLoading] = useState(false);
 
-    // function renderFeatures() {
+    const fetchCategoriesData = () => {
+        fetch('https://dzilla.herokuapp.com/api/category/')
+         .then((response) => response.json())
+         .then((json) => {
+            setCategoriesData(json)
+        })
+         .catch((error) => {
+            console.error(error)
+            Alert.alert("Err", "Something went wrong!")    
+        }).finally(()=>setLoading(false))
+    } 
 
-    //     const Header = () => (
-    //         <View style={{ marginBottom: SIZES.padding * 2 }}>
-    //             <Text style={{ ...FONTS.h3 }}>Features</Text>
-    //         </View>
-    //     )
+    useEffect(() => {
+        fetch('https://dzilla.herokuapp.com/api/category/')
+         .then((response) => response.json())
+         .then((json) => {
+            setCategoriesData(json)
+        })
+         .catch((error) => {
+            console.error(error)
+            Alert.alert("Err", "Something went wrong!")    
+        }).finally(()=>setLoading(false))
 
-    //     const renderItem = ({ item }) => (
-    //         <TouchableOpacity
-    //             style={{ marginBottom: SIZES.padding * 2, width: 60, alignItems: 'center' }}
-    //             onPress={() => console.log(item.description)}
-    //         >
-    //             <View
-    //                 style={{
-    //                     height: 50,
-    //                     width: 50,
-    //                     marginBottom: 5,
-    //                     borderRadius: 20,
-    //                     backgroundColor: item.backgroundColor,
-    //                     alignItems: 'center',
-    //                     justifyContent: 'center'
-    //                 }}
-    //             >
-    //                 <Image
-    //                     source={item.icon}
-    //                     resizeMode="contain"
-    //                     style={{
-    //                         height: 20,
-    //                         width: 20,
-    //                         tintColor: item.color
-    //                     }}
-    //                 />
-    //             </View>
-    //             <Text 
-    //                 style={{ textAlign: 'center', flexWrap: 'wrap',
-    //                  ...FONTS.body4 }}>{item.description}</Text>
-    //         </TouchableOpacity>
-    //     )
-
-    //     return (
-    //         <FlatList
-    //             ListHeaderComponent={Header}
-    //             data={features}
-    //             numColumns={4}
-    //             columnWrapperStyle={{ justifyContent: 'space-between' }}
-    //             keyExtractor={item => `${item.id}`}
-    //             renderItem={renderItem}
-    //             style={{ margin:SIZES.padding}}
-    //         />
-    //     )
-    // }
-
+        fetch('https://dzilla.herokuapp.com/api/product/')
+        .then((response) => response.json())
+        .then((json) => {
+            setDataList(json)
+            ListCategories()
+          })
+        .catch((error) => console.error(error))
+        .finally(()=>setLoading(false))
+    }, [])
+    
     function renderHeader(){
         return (
             <View
@@ -153,24 +67,9 @@ const Stores = ({navigation}) => {
                     flexDirection:'row',
                     marginHorizontal: 10,
                     alignItems:'center',
-                    height:80,
-                    // paddingHorizontal: 15
+                    height:80
                 }}
             >
-                {/* Menu */}
-                
-                {/* <TouchableOpacity
-                    onPress={() => navigation.toggleDrawer() }
-                >
-                    <Image
-                        source={icons.menu}
-                        style={{
-                            width:40,
-                            height:40
-                        }}
-                    />
-                </TouchableOpacity> */}
-
                 {/* Text */}
 
                 <View
@@ -179,23 +78,6 @@ const Stores = ({navigation}) => {
                     }}
                 >
                 {renderSearchBar()}
-                    {/* <Text
-                        style={{
-                            color: COLORS.darkGreen,
-                            ...FONTS.h2
-                        }}
-                    >
-                        Hello, Nitin
-                    </Text>
-                    <Text
-                        style={{
-                            marginTop:3,
-                            color: COLORS.gray,
-                            ...FONTS.body3
-                        }}
-                    >
-                        What do you want to cook today?
-                    </Text> */}
                 </View>
                 
                 {/* Image */}
@@ -250,73 +132,6 @@ const Stores = ({navigation}) => {
         )
     }
 
-    function renderSeeRecipeCard(){
-        return (
-            <View
-                style={{
-                    flexDirection:'row',
-                    marginTop: SIZES.padding,
-                    marginHorizontal: SIZES.padding,
-                    borderRadius: 10,
-                    backgroundColor:COLORS.lightGreen,
-                    padding:5
-                }}
-            >
-                {/* Image */}
-
-                <View
-                    style={{
-                        width:100,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <Image
-                        source={images.recipe}
-                        style={{
-                            width:80,
-                            height:80
-                        }}
-                    />
-                </View>
-
-                {/* Text */}
-
-                <View
-                    style={{
-                        flex:1,
-                        paddingVertical: SIZES.radius
-                    }}
-                >
-                    <Text
-                        style={{
-                            width: "70%",
-                            ...FONTS.body3
-                        }}
-                    >
-                        You have 12 recipes that you haven't tried yet
-                    </Text>
-
-                    <TouchableOpacity
-                        style={{
-                            marginTop:8
-                        }}
-                        onPress={() => console.log('see recipes')}
-                    >
-                        <Text
-                            style={{
-                                color: COLORS.darkGreen,
-                                textDecorationLine: 'underline',
-                                fontSize:16
-                            }}
-                        >See Recipes</Text>
-                    </TouchableOpacity>
-                </View>
-
-            </View>
-        )
-    }
-
     function renderTrendingSection(){
         return (
             <View 
@@ -332,10 +147,10 @@ const Stores = ({navigation}) => {
                 >Trending Offers</Text>
 
                 <FlatList
-                    data={dummyData.trendingRecipes}
+                    data={trendingOffers}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    keyExtractor={item => `${item.id}`}
+                    keyExtractor={item => item.id}
                     renderItem={({item, index}) => {
                         return (
                             <TrendingCard
@@ -343,8 +158,7 @@ const Stores = ({navigation}) => {
                                     marginLeft: index == 0 ? SIZES.padding : 0
                                 }}
                                 recipeItem={item}
-                                onPress={() => navigation.navigate('Recipe', 
-                                    {recipe: item}) }
+                                key={index}
                             />
                         )
                     }}
@@ -353,19 +167,33 @@ const Stores = ({navigation}) => {
         )
     }
 
+    const [categoriesData, setCategoriesData] = useState([]);
+
     const ListItem = ({ item }) => {
         return (
-          <View style={styles.item}>
+          <View style={styles.item} key={item._id}>
             <Image
-              source={item.icon}
+              source={{uri: item.categoryImage}}
               style={styles.itemPhoto}
               resizeMode="cover"
             />
-            <Text style={styles.itemText}>{item.description}</Text>
+            <Text style={styles.itemText}>{item.name}</Text>
           </View>
         );
     };
 
+    const renderCategoryList = ({item, index}) => {
+        return (
+            <ListItem 
+                containerStyle={{
+                    margin: SIZES.padding 
+                }}
+                item={item} 
+                key={index}
+            />
+        )
+    }
+    
     function renderCategories(){
         return (
             <View 
@@ -381,176 +209,90 @@ const Stores = ({navigation}) => {
                 >Categories</Text>
 
                 <FlatList
+                    refreshing={isLoading}
+                    onRefresh={()=>fetchCategoriesData()}
                     data={categoriesData}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    keyExtractor={item => `${item.id}`}
-                    renderItem={({ item, index }) => <ListItem 
-                        containerStyle={{
-                            margin: SIZES.padding 
-                        }}
-                        item={item} 
-                        onPress={() => navigation.navigate('Recipe', 
-                            item) 
-                        }
-                    />}
+                    keyExtractor={item => item.id}
+                    renderItem={renderCategoryList}
                 />
             </View>
         )
     }
 
-    // function renderCategoryHeader(){
-    //     return (
-    //         <View
-    //             style={{
-    //                 flexDirection:'row',
-    //                 alignItems:'center',
-    //                 marginTop:20,
-    //                 marginHorizontal: SIZES.padding
-    //             }}
-    //         >
-    //             {/* Section Title */}
-                
-    //             <Text
-    //                 style={{
-    //                     flex:1,
-    //                     ...FONTS.h2
-    //                 }}
-    //             >Categories</Text>
-
-    //             {/* View All */}
-
-    //             <TouchableOpacity>
-    //                 <Text
-    //                     style={{
-    //                         color: COLORS.darkGreen,
-    //                         ...FONTS.body4
-    //                     }} 
-    //                 >View All</Text>
-    //             </TouchableOpacity>
-
-    //         </View>
-
-            
-    //     )
-    // }
-
     const categoryList = [
-        {
-            id:1,
-            status:'All'
-        },
-        {
-            id:2,
-            status:'Visited'
-        },
-        {
-            id:3,
-            status:'Favorites'
-        }
+        { id:1, status:'All' },
+        { id:2, status:'Visited' },
+        { id:3, status:'Favorites' }
     ];
 
-    
-    // const DATA = [
-    //     {
-    //         id:'1',
-    //         name: 'Ajio',
-    //         image: images.ajio,
-    //         cashback:'12.0%',
-    //         category: 'Home, Garden & Decoration',
-    //         status: 'All' 
-    //     },
-    //     {
-    //         id:'2',
-    //         name: 'Myntra',
-    //         image: images.myntra,
-    //         category: 'Clothing & Shoes',
-    //         cashback:'8.6%',
-    //         status: 'All' 
-    //     },
-    //     {
-    //         id:'3',
-    //         name: 'Zivame',
-    //         image: images.zivame,
-    //         cashback:'8.0%',
-    //         category: 'Clothing & Shoes, Jewellry & Accessories',
-    //         status: 'Visited' 
-    //     },
-    //     {
-    //         id:'4',
-    //         name: 'Limeroad',
-    //         image: images.limeroad,
-    //         category: 'Marketplaces',
-    //         cashback:'12.6%',
-    //         status: 'Favorites' 
-    //     },
-    // ]
-
-        
-    const [status, setStatus] = useState('All')
-    const [datalist, setDataList] = useState([]);
-    
-    const [isLoading, setLoading] = useState(true);
-    
-    useEffect(() => {
-        // setLoading(true)
+    const fetchListData = () => {
         fetch('https://dzilla.herokuapp.com/api/product/')
-          .then((response) => response.json())
-          .then((json) => {setDataList(json), ListCategories()})
-          .catch((error) => console.error(error))
-          .finally(() => setLoading(false));
+        .then((response) => response.json())
+        .then((json) => {
+            setDataList(json)
+            ListCategories()
+          })
+        .catch((error) => console.error(error))
+        .finally(()=>setLoading(false))
+    }
+
+    useEffect(() => {
+        setDataFilter(status)
+        fetchListData()
     }, [status]);
+    
+    const setDataFilter = (status) => {
+        setDataList([...datalist.filter(e => e.status === status)])
+    }
     
     const ListCategories = () => {
 
-        const setDataFilter = status => {
-            // if(status == 'All'){
-                setDataList([...datalist.filter(e => e.status === status)])
-                // console.log(status)
-            // }
-            // else if(status == 'Visited'){
-            //     setDataList([...datalist.filter(e => e.status === status)])
-            //     // console.log(status)
-            // }
-            // else if(status == 'Favorites'){
-            //     setDataList([...datalist.filter(e => e.status === status)])
-            //     // console.log(status)
-            // }
-            // setStatus(status)
-        }
-    
-        // const [selectedCategoryIndex, setSelectedCategoryIndex] = useState('All');
         return (
-        <View style={styles.categoryListContainer}>
-            {categoryList.map((e) => (
-            <Pressable
-                key={e.id}
-                onPress={() => {setStatus(e.status), setDataFilter(e.status)}}>
-                <Text
-                style={[
-                    styles.categoryListText,
-                    e.status == 'Visited' ? styles.visitedTab : null,
-                    e.status == status && styles.activeCategoryListText,
-                    // index==1 ? styles.visitedTab : null,
-                    // index == selectedCategoryIndex && styles.activeCategoryListText,
-                ]}>
-                {e.status}
-                </Text>
-            </Pressable>
-            ))}
-        </View>
+            <View style={styles.categoryListContainer}>
+                {categoryList.map((e) => (
+                <Pressable
+                    key={e.id}
+                    onPress={() => {setStatus(e.status)}}>
+                    <Text
+                    style={[
+                        styles.categoryListText,
+                        e.status == 'Visited' ? styles.visitedTab : null,
+                        e.status == status && styles.activeCategoryListText
+                    ]}>
+                    {e.status}
+                    </Text>
+                </Pressable>
+                ))}
+            </View>
         );
     };
 
+    const forNoList = () => {
+        if(status==='All'){
+            return(
+                <View></View>
+        )}else if(status === 'Visited'){
+            return(
+                <View><Text>You've no Visited shops</Text></View>
+        )}else{
+            return(
+                <View><Text>You've no Favorites shops</Text></View>
+        )}
+    }
+
     const renderItem = ({item, index}) => {
         return (
-            <CategoryCard
-                containerStyle={{
-                    marginHorizontal: SIZES.padding
-                }}
-                categoryItem={item}
-                onPress={() => navigation.navigate('webView')}
-            />
+            ( datalist.length > 0 ) ? 
+                (<CategoryCard
+                    containerStyle={{
+                        marginHorizontal: SIZES.padding
+                    }}
+                    categoryItem={item}
+                    key={index}
+                    onPress={() => navigation.navigate('webView')}
+                />) : forNoList() 
         )
     }
     
@@ -561,20 +303,11 @@ const Stores = ({navigation}) => {
                 backgroundColor: COLORS.white
             }}
         >
-        {isLoading ? 
-            <View style={[styles.container, styles.horizontal]}>
-                <ActivityIndicator size="small" color="#0000ff" />
-            </View>
-             :  
-            (<FlatList
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refresh}
-                        onRefresh={onRefresh}
-                    />
-                }
+            <FlatList
+                refreshing={isLoading}
+                onRefresh={()=>fetchListData()}
                 data={datalist}
-                keyExtractor={item => `${item.id}`}
+                keyExtractor={item => item.id}
                 keyboardDismissMode='on-drag'
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
@@ -582,41 +315,21 @@ const Stores = ({navigation}) => {
                         {/* Header */}
                         {renderHeader()}
                         
-                        {/* Featured */}
-                        {/* {renderFeatures()} */}
-
-                        {/* See Recipe Card */}
-                        {/* {renderSeeRecipeCard()} */}
-
+                        {/* Categories */}
                         {renderCategories()}
                         
                         {/* Trending Section */}
                         {renderTrendingSection()}
 
+                        {/* All, Visited & Fav */}
                         {ListCategories()}
-                        
-                        {/* Category Header */}
-                        {/* {renderCategoryHeader()} */}
-                        
                     </View>
                 }
                 renderItem={renderItem}
-                // renderItem={({item})=>{
-                //     return(
-                //         <CategoryCard
-                //             containerStyle={{
-                //                 marginHorizontal: SIZES.padding
-                //             }}
-                //             categoryItem={item}
-                //             onPress={() => navigation.navigate('this product', item)}
-                //         />
-                //     )
-                // }}
                 ListFooterComponent={
                     <View style={{marginBottom:120}}/>
                 }
-            />)
-        }
+            />
         </SafeAreaView>
     )
 }
@@ -650,7 +363,6 @@ const styles = StyleSheet.create({
     item: {
       margin: 20,
       textAlign:'center',
-    //   backgroundColor: COLORS.lightpurple
     },
     itemPhoto: {
       width: 140,
@@ -662,7 +374,6 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       textAlign:'center',
       marginTop: 15,
-    //   marginHorizontal: 25,
       fontSize: 18,
     },
     container: {

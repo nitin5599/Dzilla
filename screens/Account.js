@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Image, SafeAreaView, StyleSheet} from 'react-native';
 import {
   Avatar,
@@ -16,6 +16,31 @@ import { COLORS, icons, images } from "../constants"
 
 const Account = ({navigation}) => {
 
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [pic, setPic] = useState('https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg')
+    const [isLoading, setLoading] = useState(false);
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = () => {
+        try {
+            AsyncStorage.getItem('UserData')
+                .then(value => {
+                    if (value != null) {
+                        let user = JSON.parse(value);
+                        setName(user.name);
+                        setEmail(user.email);
+                        setPic(user.pic);
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const myCustomShare = async () => {
         const shareOptions = {
           message: 'I am sending this message!',
@@ -32,12 +57,12 @@ const Account = ({navigation}) => {
 
     const handleLogout = async () => {
         try {
-            const keyValue = await AsyncStorage.removeItem('token')
+            const keyValue = await AsyncStorage.removeItem('UserData')
             // console.log("TOKEN 1 - ", await AsyncStorage.getItem('token'))
             // then(() =>{
-                if(keyValue == null){
-                    AsyncStorage.setItem('token', 'token')
-                }
+                // if(keyValue == null){
+                //     AsyncStorage.setItem('token', 'token')
+                // }
                 // console.log("TOKEN 2 - ", await AsyncStorage.getItem('token'))
                 navigation.navigate('Login')
             // })
@@ -53,7 +78,7 @@ const Account = ({navigation}) => {
             <View style={styles.userInfoSection}>
                 <View style={{flexDirection: 'row', marginTop: 15}}>
                 <Avatar.Image 
-                    source={images.me}
+                    source={{uri: pic}}
                     size={80}
                 />
                 <View style={{marginLeft: 20}}>
@@ -61,31 +86,31 @@ const Account = ({navigation}) => {
                         style={[
                             styles.title,
                             {
-                                marginTop:15,
-                                marginBottom: 5,
+                                marginTop:25,
+                                marginBottom: 0,
                             }
                         ]}
-                    >Nitin Chandak</Title>
-                    <Caption style={styles.caption}>@nitin_55</Caption>
+                    >{name}</Title>
+                    {/* <Caption style={styles.caption}>@nitin_55</Caption> */}
                 </View>
                 </View>
             </View>
 
             <View style={styles.userInfoSection}>
                 
-                <View style={styles.row}>
+                {/* <View style={styles.row}>
                     <Image source={icons.location} style={{width:25, height:25}}/>
                     <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>Kishangarh, India</Text>
-                </View>
+                </View> */}
                 
-                <View style={styles.row}>
+                {/* <View style={styles.row}>
                     <Image source={icons.phone} style={{width:25, height:25}}/>
                     <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>+91-9602996383</Text>
-                </View>
+                </View> */}
                 
                 <View style={styles.row}>
                     <Image source={icons.mail} style={{width:25, height:25}}/>
-                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>nitinchandak55@gmail.com</Text>
+                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>{email ? email: 'your email'}</Text>
                 </View>
 
             </View>

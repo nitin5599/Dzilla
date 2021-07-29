@@ -53,7 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
       pic: user.pic,
       token: generateToken(user._id),
     });
-  } else {
+  }else {
     res.status(400);
     throw new Error("User not found");
   }
@@ -69,6 +69,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.pic = req.body.pic || user.pic;
+    
     if (req.body.password) {
       user.password = req.body.password;
     }
@@ -80,7 +81,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       pic: updatedUser.pic,
-      isAdmin: updatedUser.isAdmin,
       token: generateToken(updatedUser._id),
     });
   } else {
@@ -89,4 +89,27 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, updateUserProfile, registerUser };
+const getUser = asyncHandler(async (req, res) => {
+  try{ 
+    const users = await User.find({});
+    console.log(users)
+    res.json(users)
+  } catch (error) {
+    console.log('UserController get Users Error - ', error)
+    res.status(500).json({
+      errorMessage: 'error 500, please try again!',
+      error
+    })
+ }  
+  // if (user) {
+  //   console.log(user)
+  //   // res.status(404);
+  //   // throw new Error("User already exists");
+  // }else {
+  //   res.status(400);
+  //   throw new Error("User not found");
+  // }
+
+});
+
+export { authUser, updateUserProfile, registerUser, getUser };
