@@ -29,6 +29,7 @@
     "mongoose": "^5.13.3",
     "multer": "^1.4.2",
     "nodemon": "^2.0.12",
+    "react-native-image-picker": "^4.0.6",
     "shortid": "^2.2.16",
     "slugify": "^1.6.0"
   },

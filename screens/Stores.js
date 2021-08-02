@@ -9,9 +9,7 @@ import {
     FlatList,
     StyleSheet,
     Pressable,
-    Animated,
     Alert,
-    ActivityIndicator,
     RefreshControl
  } from 'react-native'
 import { COLORS, icons, images, FONTS, SIZES } from "../constants"
@@ -19,8 +17,6 @@ import { CategoryCard, TrendingCard,  } from "../components";
 import { trendingOffers } from '../constants/trendingOffers'
 
 const Stores = ({navigation}) => {
-
-    // const [refresh, setRefresh] = useState(false)
 
     const [status, setStatus] = useState('All')
     const [datalist, setDataList] = useState([]);
@@ -39,25 +35,28 @@ const Stores = ({navigation}) => {
         }).finally(()=>setLoading(false))
     } 
 
-    useEffect(() => {
-        fetch('https://dzilla.herokuapp.com/api/category/')
-         .then((response) => response.json())
-         .then((json) => {
-            setCategoriesData(json)
-        })
-         .catch((error) => {
-            console.error(error)
-            Alert.alert("Err", "Something went wrong!")    
-        }).finally(()=>setLoading(false))
+    const fetchListData = async () => {
+        try {
+            const response = await fetch('https://dzilla.herokuapp.com/api/product/');
+            const responseData = await response.json();
+            setDataList(responseData)
+        } catch (error) {
+            console.log(error)
+        }
 
-        fetch('https://dzilla.herokuapp.com/api/product/')
-        .then((response) => response.json())
-        .then((json) => {
-            setDataList(json)
-            ListCategories()
-          })
-        .catch((error) => console.error(error))
-        .finally(()=>setLoading(false))
+        // fetch('https://dzilla.herokuapp.com/api/product/')
+        // .then((response) => response.json())
+        // .then((json) => {
+        //     setDataList(json)
+        //     ListCategories()
+        //   })
+        // .catch((error) => console.error(error))
+        // .finally(()=>setLoading(false))
+    }
+
+    useEffect(() => {
+        fetchCategoriesData()
+        fetchListData()
     }, [])
     
     function renderHeader(){
@@ -168,6 +167,17 @@ const Stores = ({navigation}) => {
     }
 
     const [categoriesData, setCategoriesData] = useState([]);
+    const [refreshing, setRefreshing] = React.useState(false);
+    
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));        
+    }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchListData()
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const ListItem = ({ item }) => {
         return (
@@ -209,8 +219,8 @@ const Stores = ({navigation}) => {
                 >Categories</Text>
 
                 <FlatList
-                    refreshing={isLoading}
-                    onRefresh={()=>fetchCategoriesData()}
+                    // refreshing={isLoading}
+                    // onRefresh={()=>fetchCategoriesData()}
                     data={categoriesData}
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -227,24 +237,14 @@ const Stores = ({navigation}) => {
         { id:3, status:'Favorites' }
     ];
 
-    const fetchListData = () => {
-        fetch('https://dzilla.herokuapp.com/api/product/')
-        .then((response) => response.json())
-        .then((json) => {
-            setDataList(json)
-            ListCategories()
-          })
-        .catch((error) => console.error(error))
-        .finally(()=>setLoading(false))
-    }
-
-    useEffect(() => {
-        setDataFilter(status)
-        fetchListData()
-    }, [status]);
+    // useEffect(() => {
+    //     setDataFilter(status)
+    //     // fetchListData()
+    // }, [status]);
     
-    const setDataFilter = (status) => {
-        setDataList([...datalist.filter(e => e.status === status)])
+    const setDataFilter = (currentStatus) => {
+        setStatus(currentStatus)
+        setDataList([...datalist.filter(e => e.status === currentStatus)])
     }
     
     const ListCategories = () => {
@@ -254,14 +254,16 @@ const Stores = ({navigation}) => {
                 {categoryList.map((e) => (
                 <Pressable
                     key={e.id}
-                    onPress={() => {setStatus(e.status)}}>
+                    onPress={() => setDataFilter(e.status)}
+                >
                     <Text
-                    style={[
-                        styles.categoryListText,
-                        e.status == 'Visited' ? styles.visitedTab : null,
-                        e.status == status && styles.activeCategoryListText
-                    ]}>
-                    {e.status}
+                        style={[
+                            styles.categoryListText,
+                            e.status == 'Visited' ? styles.visitedTab : null,
+                            e.status == status && styles.activeCategoryListText
+                        ]}
+                    >
+                        {e.status}
                     </Text>
                 </Pressable>
                 ))}
@@ -272,7 +274,7 @@ const Stores = ({navigation}) => {
     const forNoList = () => {
         if(status==='All'){
             return(
-                <View></View>
+                <View><Text>No shops at all</Text></View>
         )}else if(status === 'Visited'){
             return(
                 <View><Text>You've no Visited shops</Text></View>
@@ -304,8 +306,14 @@ const Stores = ({navigation}) => {
             }}
         >
             <FlatList
-                refreshing={isLoading}
-                onRefresh={()=>fetchListData()}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+                // refreshing={isLoading}
+                // onRefresh={()=>fetchListData()}
                 data={datalist}
                 keyExtractor={item => item.id}
                 keyboardDismissMode='on-drag'

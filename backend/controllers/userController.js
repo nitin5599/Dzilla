@@ -92,7 +92,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 const getUser = asyncHandler(async (req, res) => {
   try{ 
     const users = await User.find({});
-    console.log(users)
+    // console.log(users)
     res.json(users)
   } catch (error) {
     console.log('UserController get Users Error - ', error)
@@ -101,15 +101,6 @@ const getUser = asyncHandler(async (req, res) => {
       error
     })
  }  
-  // if (user) {
-  //   console.log(user)
-  //   // res.status(404);
-  //   // throw new Error("User already exists");
-  // }else {
-  //   res.status(400);
-  //   throw new Error("User not found");
-  // }
-
 });
 
 export { authUser, updateUserProfile, registerUser, getUser };

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Image, SafeAreaView, StyleSheet} from 'react-native';
+import {View,RefreshControl, Image, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
 import {
   Avatar,
   Title,
@@ -7,7 +7,7 @@ import {
   Text,
   TouchableRipple,
 } from 'react-native-paper';
-
+import axios from 'axios';
 import Share from 'react-native-share';
 import files from "../constants/filebase64";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +18,7 @@ const Account = ({navigation}) => {
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [tokenId, setTokenId] = useState('')
     const [pic, setPic] = useState('https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg')
     const [isLoading, setLoading] = useState(false);
 
@@ -71,11 +72,48 @@ const Account = ({navigation}) => {
             console.log(error)
         }
     }
+    
+    const wait = (timeout) => {
+        // return getUpdatedData()
+        return new Promise(resolve => setTimeout(resolve, timeout));
+        
+    }
+    
+    const [refreshing, setRefreshing] = React.useState(false);
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        axios.get('https://dzilla.herokuapp.com/api/users/')
+            .then(response => {
+                response.data.map((currentuser) => 
+                    currentuser.email === email ? setName(currentuser.name) : ''
+                )                
+                let localuserdata = {
+                    name: name,
+                    email: email,
+                    pic: pic,
+                };
+                // console.log(localuserdata)
+                AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
+                // navigation.navigate('Stores')
+            })
+            .catch((error) => {
+                console.log('ERROR - ', error);
+            })  
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+    
     return (
         <SafeAreaView style={styles.container}>
-
-            <View style={styles.userInfoSection}>
+        <ScrollView 
+            refreshControl={
+            <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+            />
+            }
+        >
+            <View style={styles.userInfoSection} >
                 <View style={{flexDirection: 'row', marginTop: 15}}>
                 <Avatar.Image 
                     source={{uri: pic}}
@@ -110,7 +148,7 @@ const Account = ({navigation}) => {
                 
                 <View style={styles.row}>
                     <Image source={icons.mail} style={{width:25, height:25}}/>
-                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>{email ? email: 'your email'}</Text>
+                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>{email}</Text>
                 </View>
 
             </View>
@@ -141,7 +179,7 @@ const Account = ({navigation}) => {
 
                 <TouchableRipple onPress={() => console.log('something')}>
                     <View style={styles.menuItem}>
-                        <Image source={icons.fav} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.heart} color="#FF6347" style={{width:25, height:25}}/>
                         <Text style={styles.menuItemText}>Your Favorites</Text>
                     </View>
                 </TouchableRipple>
@@ -183,6 +221,8 @@ const Account = ({navigation}) => {
             
             </View>
         
+        </ScrollView>
+          
         </SafeAreaView>
 
     )

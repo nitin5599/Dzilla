@@ -90,12 +90,7 @@ const SignUp = ({navigation}) => {
         }
     }
 
-    const [error, setError] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = React.useState(false)
-
-    const [areas, setAreas] = React.useState([])
-    const [selectedArea, setSelectedArea] = React.useState(null)
     const [modalVisible, setModalVisible] = React.useState(false)
 
     function renderHeader() {
@@ -166,13 +161,25 @@ const SignUp = ({navigation}) => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [tokenId, setTokenId] = useState('')
     const [loginData, setLoginData] = useState([])
 
     useEffect(async() => {
         if(loginData){
-            axios.get('https://dzilla.herokuapp.com/api/users/')
+            await axios.get('https://dzilla.herokuapp.com/api/users/')
             .then(response => {
-                console.log('ALL USERS DATA - ',response.data)
+                response.data.map((currentuser) => 
+                    currentuser.email === email ? setName(currentuser.name) : ''
+                )                
+                let localuserdata = {
+                    name: name,
+                    email: email,
+                    pic: pic,
+                    token: tokenId
+                };
+                // console.log(localuserdata)
+                AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
+                navigation.navigate('Stores')
             })
             .catch((error) => {
                 console.log('ERROR - ', error);
@@ -189,7 +196,7 @@ const SignUp = ({navigation}) => {
                     'Content-Type': 'application/json'
                 }
 
-                setLoading(true)
+                // setLoading(true)
 
                 const user = JSON.stringify({
                     email: email,
@@ -201,85 +208,17 @@ const SignUp = ({navigation}) => {
                     headers: headers,
                     body: user
                 }
-                
-                
+                                
                 await axios.post('https://dzilla.herokuapp.com/api/users/login' , user, {headers: headers})
                 .then((res)=>{     
                     console.log('LOGIN RESPONSE - ', res.data) 
+                    setTokenId(res.data.token)
                     setLoginData(res.data)                   
                 }).catch(err=>{
                     console.log(err)
                 })
 
-                // const callUserData = await axios.get('http://localhost:5000/api/users/')
-                // const data = await callUserData.data;
-                // console.log(data)
-                //     .then(response => {
-                //         console.log('USERS DATA - ', response.data)                     
-                // })
-                
-                // const callUserData = () => {
-                //    fetch('http://localhost:5000/api/users/')
-                //     .then((res) => {
-                //         console.log('USERDATA - ', res.json());                            
-                //     })
-                // }
-
-                // fetch('https://dzilla.herokuapp.com/api/users/login', config)
-                // .then((response) => response.json())
-                // .then(
-                // //     (json) => {
-                // //   console.log('LOGIN RESPONSE', json)
-                //   callUserData()
-                // // }
-                // )
-                
-                // const response =  await fetch('https://dzilla.herokuapp.com/api/users/login', config)
-                // const data = await response.json();
-                
-                // if(data.message === 'Invalid Credentials!'){
-                //     Alert.alert('Alert', data.message)
-                // }
-                // else{
-                //     try {
-                        // const existingUser = await AsyncStorage.getItem('UserData')
-                        // if(existingUser.email === email)
-                        // {
-                        //     const userdata = {
-                        //         ...existingUser
-                        //     }    
-                        //     await AsyncStorage.setItem('UserData', JSON.stringify(userdata));
-                        //     navigation.navigate('Stores');
-                        // }
-                        // else{
-                            // const userRes = await axios.get('http://localhost:5000/api/users')
-                            // const userdata = await userRes.json();
-                            // .then(response => {
-                                // console.log(userdata)
-                                // setItems(response.data)
-                                // setSuccessMsg('Category successfully updated')                      
-                            // })
-                            // fetch('http://localhost:5000/api/users/')
-                            // .then((res) => {
-                            //     console.log(res.json());                            
-                            // })
-                        // }
-                        // const userdata = {
-                        //     email: email,
-                        //     pic: pic,
-                        //     token: data.token
-                        // }                       
-                
-                    // } catch (error) {
-                    //     console.log('some error - ', error);
-                    // }
-                    // AsyncStorage.setItem('token', data.token)
-                    // const key =  await AsyncStorage.getItem('token');
-                    // if(key)
-                    //     navigation.navigate('Stores')
-                // }
-
-                setLoading(false)
+                // setLoading(false)
             } 
             catch (error) {
                 console.error("getting error - ", error)
