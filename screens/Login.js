@@ -210,7 +210,7 @@ const Login = ({navigation}) => {
                         name: response.data.name,
                         email: response.data.email,
                         pic: pic,
-                        token: response.data.tokenId
+                        token: response.data.token
                     };
                     console.log('localuserdata - ', localuserdata)
                     const jsonValue = JSON.stringify(localuserdata)

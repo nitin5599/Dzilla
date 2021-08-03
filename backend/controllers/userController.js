@@ -15,8 +15,8 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      // isAdmin: user.isAdmin,
       pic: user.pic,
+      wallet: user.wallet,
       token: generateToken(user._id),
     });
   } else {
@@ -45,7 +45,8 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    pic
+    pic,
+    wallet: ''
   });
 
   if (user) {
@@ -54,6 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       pic: user.pic,
+      wallet: user.wallet,
       token: generateToken(user._id),
     });
   }else {
@@ -66,12 +68,19 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+   
   const user = await User.findById(req.user._id);
 
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.pic = req.body.pic || user.pic;
+    user.wallet = req.body.wallet || user.wallet;
     
     if (req.body.password) {
       user.password = req.body.password;
@@ -84,6 +93,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       pic: updatedUser.pic,
+      wallet: updatedUser.wallet,
       token: generateToken(updatedUser._id),
     });
   } else {

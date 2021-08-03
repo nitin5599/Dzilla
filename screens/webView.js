@@ -38,9 +38,9 @@ const webView = ({route}) => {
   //   }
   // }
 
-  const {userid} = route.params
-  const user_id = userid.toString();
-  console.log(user_id)
+  const {userid, token} = route.params
+  // const user_id = userid.toString();
+  console.log(userid, token)
 
   return <>
     {
@@ -56,7 +56,7 @@ const webView = ({route}) => {
     <WebView
       javaScriptEnabled={true}
       domStorageEnabled={true}
-      source={{uri: `https://nitin5599.github.io/webpage?id=${user_id}`}}
+      source={{uri: `https://nitin5599.github.io/webpage?id=${userid}&token=${token}`}}
       onError={(event) =>
         alert(`Webview error: ${event.nativeEvent.description}`)
       }

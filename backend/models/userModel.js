@@ -16,6 +16,9 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    wallet:{
+      type: String
+    },
     // isAdmin: {
     //   type: Boolean,
     //   required: true,

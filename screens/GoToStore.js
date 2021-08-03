@@ -9,6 +9,7 @@ const GoToStore = ({navigation, route}) => {
     const { storeImage } = route.params;
 
     const [id, setId] = useState('')
+    const [token, setToken] = useState('')
 
     useEffect(() => {
         getData();
@@ -19,8 +20,8 @@ const GoToStore = ({navigation, route}) => {
           const jsonValue = await AsyncStorage.getItem('UserData')
           if (jsonValue != null) {
             let user = JSON.parse(jsonValue);
-            setId(user.userid);
-            console.log('webview user - ', id)
+            setId(user.userid);setToken(user.token)
+            console.log('webview user - ', id , token)
           }
         } catch (error) {
             console.log(error);
@@ -44,7 +45,7 @@ const GoToStore = ({navigation, route}) => {
                     <Text 
                         style={{ color: COLORS.white, ...FONTS.body2 , 
                         textTransform:'uppercase'}}
-                        onPress={() => navigation.navigate('webView', {userid: id})}
+                        onPress={() => navigation.navigate('webView', {userid: id, token: token})}
                     >
                         Go To Store
                     </Text>
