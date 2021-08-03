@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { 
     View,
     Text,
@@ -11,7 +11,9 @@ import {
     KeyboardAvoidingView,
     Pressable,
     ScrollView,
-    Alert
+    StyleSheet,
+    Alert,
+    ActivityIndicator
 } from 'react-native'
 import { icons, images, COLORS, SIZES, FONTS} from '../constants'
 import LinearGradient from 'react-native-linear-gradient'
@@ -30,6 +32,25 @@ const SignUp = ({navigation}) => {
     const [selectedArea, setSelectedArea] = React.useState(null)
     const [modalVisible, setModalVisible] = React.useState(false)
 
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        try {
+            setLoading(true)  
+            await AsyncStorage.getItem('UserData')
+                .then(value => {
+                    if (value !== null) {
+                        navigation.navigate('Stores');
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+        setLoading(false)  
+    }
+
     function renderLogo() {
         return (
             <View
@@ -40,13 +61,14 @@ const SignUp = ({navigation}) => {
                     justifyContent: 'center'
                 }}
             >
-                <Image
+                <Text style={styles.text}>Dzilla</Text>
+                {/* <Image
                     source={images.wallieLogo}
                     resizeMode="contain"
                     style={{
                         width: "60%"
                     }}
-                />
+                /> */}
             </View>
         )
     }
@@ -99,10 +121,6 @@ const SignUp = ({navigation}) => {
                     } catch (error) {
                         console.log(error);
                     }
-                    // AsyncStorage.setItem('token', data.token)
-                    // const key =  await AsyncStorage.getItem('token');
-                    // if(key)
-                        // navigation.navigate('Stores')
                 }
 
                 setLoading(false)
@@ -126,19 +144,19 @@ const SignUp = ({navigation}) => {
             >
                 {/* Full Name */}
                 <View style={{ marginTop: SIZES.padding * 3 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Name</Text>
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.body3 }}>Name</Text> */}
                     <TextInput
                         style={{
                             marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
+                            borderBottomColor: COLORS.black,
                             borderBottomWidth: 1,
                             height: 40,
-                            color: COLORS.white,
+                            color: COLORS.black,
                             ...FONTS.body3
                         }}
                         placeholder="Enter Name"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
+                        placeholderTextColor={COLORS.black}
+                        selectionColor={COLORS.black}
                         value={name}
                         onChangeText={setName}
                     />
@@ -147,19 +165,19 @@ const SignUp = ({navigation}) => {
                 {/* Email */}
 
                 <View style={{ marginTop: SIZES.padding * 3 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Email</Text>
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.body3 }}>Email</Text> */}
                     <TextInput
                         style={{
                             marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
+                            borderBottomColor: COLORS.black,
                             borderBottomWidth: 1,
                             height: 40,
-                            color: COLORS.white,
+                            color: COLORS.black,
                             ...FONTS.body3
                         }}
                         placeholder="Enter email"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
+                        placeholderTextColor={COLORS.black}
+                        selectionColor={COLORS.black}
                         value={email}
                         onChangeText={setEmail}
                     />
@@ -168,19 +186,19 @@ const SignUp = ({navigation}) => {
                 {/* Password */}
                 
                 <View style={{ marginTop: SIZES.padding * 2 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.body3 }}>Password</Text> */}
                     <TextInput
                         style={{
                             marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
+                            borderBottomColor: COLORS.black,
                             borderBottomWidth: 1,
                             height: 40,
-                            color: COLORS.white,
+                            color: COLORS.black,
                             ...FONTS.body3
                         }}
                         placeholder="Enter Password"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
+                        placeholderTextColor={COLORS.black}
+                        selectionColor={COLORS.black}
                         secureTextEntry={!showPassword}
                         value={password}
                         onChangeText={setPassword}
@@ -200,7 +218,7 @@ const SignUp = ({navigation}) => {
                             style={{
                                 height: 20,
                                 width: 20,
-                                tintColor: COLORS.white
+                                tintColor: COLORS.black
                             }}
                         />
                     </TouchableOpacity>
@@ -224,7 +242,10 @@ const SignUp = ({navigation}) => {
                         justifyContent: 'center'
                     }}
                 >
-                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Continue</Text>
+                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>
+                    {loading ? <ActivityIndicator size="small" color="#fff" /> 
+                        : 'Continue'}
+                    </Text>
                 </TouchableOpacity>
             </View>
         )
@@ -235,31 +256,38 @@ const SignUp = ({navigation}) => {
             behavior={Platform.OS === "ios" ? "padding" : null}
             style={{ flex: 1 }}
         >
-            <LinearGradient
-                colors={[COLORS.lime, COLORS.emerald]}
-                style={{ flex: 1,  }}
-            >
-                <ScrollView>
-                    {/* {renderHeader()} */}
-                    {renderLogo()}
-                    {renderForm()}
-                    {renderButton()}
-                    <View style={{ margin: SIZES.padding * 1 }}>
-                        <TouchableOpacity
-                            style={{
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                            onPress={() => navigation.navigate("Login")}
-                        >
-                            <Text style={{ color: COLORS.white, ...FONTS.h4 }}>Already a user? Login</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </LinearGradient>
-            {/* {renderAreaCodesModal()} */}
+            {loading ? <ActivityIndicator style={{flex: 1,justifyContent:'center'}} size="small" color="#0000ff" />
+                : <ScrollView>
+                {/* {renderHeader()} */}
+                {renderLogo()}
+                {renderForm()}
+                {renderButton()}
+                <View style={{ margin: SIZES.padding * 1 }}>
+                    <TouchableOpacity
+                        style={{
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                        onPress={() => navigation.navigate("Login")}
+                    >
+                        <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Already a user? Login</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>}
+        {/* {renderAreaCodesModal()} */}
         </KeyboardAvoidingView>
     )
 }
+
+const styles = StyleSheet.create({
+    text:{
+        fontFamily: 'Kufam-SemiBoldItalic',
+        fontSize: 48,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        marginBottom: 10,
+        color: '#051d5f',
+    }
+})
 
 export default SignUp

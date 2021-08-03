@@ -10,6 +10,8 @@ import {
     FlatList,
     KeyboardAvoidingView,
     ScrollView,
+    StyleSheet,
+    ActivityIndicator,
     Alert
 } from 'react-native'
 import axios from 'axios'; 
@@ -20,75 +22,74 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  GoogleSignin,
     GoogleSigninButton,
     statusCodes, } from '@react-native-google-signin/google-signin';
-import { isEmpty } from 'lodash';
 
-const SignUp = ({navigation}) => {
+const Login = ({navigation}) => {
     
     const [user, setuser] = useState({});
     
-    useEffect(() => {
-        GoogleSignin.configure({
-            webClientId: '113035076335-kkr3lf5t2953fhc69htrcbl3b63d83c8.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
-            offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-            forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
-        });
-        isSignedIn();
-    }, [])
+    // useEffect(() => {
+    //     GoogleSignin.configure({
+    //         webClientId: '113035076335-kkr3lf5t2953fhc69htrcbl3b63d83c8.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+    //         offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+    //         forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
+    //     });
+    //     isSignedIn();
+    // }, [])
 
-    const signIn = async() => {
-        try {
-            await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            console.log('due___', userInfo)
-            setuser(userInfo);
-        } catch (error) {
-            console.log('error message___ ', error.message)
-                if(error.code === statusCodes.SIGN_IN_CANCELLED){
-                    console.log('user cancelled login flow')
-                }else if(error.code === statusCodes.IN_PROGRESS){
-                    console.log('user signing in....')
-                }else if(error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE){
-                    console.log('google play services not available')
-                }else{
-                    console.log('some other error!')
-                }
-            }
-        }
+    // const signIn = async() => {
+    //     try {
+    //         await GoogleSignin.hasPlayServices();
+    //         const userInfo = await GoogleSignin.signIn();
+    //         console.log('due___', userInfo)
+    //         setuser(userInfo);
+    //     } catch (error) {
+    //         console.log('error message___ ', error.message)
+    //             if(error.code === statusCodes.SIGN_IN_CANCELLED){
+    //                 console.log('user cancelled login flow')
+    //             }else if(error.code === statusCodes.IN_PROGRESS){
+    //                 console.log('user signing in....')
+    //             }else if(error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE){
+    //                 console.log('google play services not available')
+    //             }else{
+    //                 console.log('some other error!')
+    //             }
+    //         }
+    //     }
 
-    const isSignedIn = async () => {
-        const isSignedIn = await GoogleSignin.isSignedIn();
-        if(!!isSignedIn){
-            getCurrentUserInfo()
-        }else{
-            console.log('Please login!')
-        }
-    }
+    // const isSignedIn = async () => {
+    //     const isSignedIn = await GoogleSignin.isSignedIn();
+    //     if(!!isSignedIn){
+    //         getCurrentUserInfo()
+    //     }else{
+    //         console.log('Please login!')
+    //     }
+    // }
 
-    const getCurrentUserInfo = async()=>{
-        try {
-            const userInfo = await GoogleSignin.signInSilently();
-            console.log('edit__', user);
-            setuser(userInfo)
-        } catch (error) {
-            if(error.code === statusCodes.SIGN_IN_REQUIRED){
-                Alert.alert('User has not Signed in yet!')
-                console.log('User has not Signed in yet!')
-            }else{
-                Alert.alert('something went wrong!')
-                console.log('something went wrong!')
-            }
-        }
-    }
+    // const getCurrentUserInfo = async()=>{
+    //     try {
+    //         const userInfo = await GoogleSignin.signInSilently();
+    //         console.log('edit__', user);
+    //         setuser(userInfo)
+    //     } catch (error) {
+    //         if(error.code === statusCodes.SIGN_IN_REQUIRED){
+    //             Alert.alert('User has not Signed in yet!')
+    //             console.log('User has not Signed in yet!')
+    //         }else{
+    //             Alert.alert('something went wrong!')
+    //             console.log('something went wrong!')
+    //         }
+    //     }
+    // }
 
-    const signOut = async() => {
-        try {
-            await GoogleSignin.revokeAccess()
-            await GoogleSignin.signOut()
-            setuser({})
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    // const signOut = async() => {
+    //     try {
+    //         await GoogleSignin.revokeAccess()
+    //         await GoogleSignin.signOut()
+    //         setuser({})
+    //     } catch (error) {
+    //         console.error(error)
+    //     }
+    // }
 
     const [showPassword, setShowPassword] = React.useState(false)
     const [modalVisible, setModalVisible] = React.useState(false)
@@ -129,74 +130,65 @@ const SignUp = ({navigation}) => {
                     justifyContent: 'center'
                 }}
             >
-                <Image
+                <Text style={styles.text}>Dzilla</Text>
+                {/* <Image
                     source={images.wallieLogo}
                     resizeMode="contain"
                     style={{
                         width: "60%"
                     }}
-                />
+                /> */}
             </View>
         )
     }
 
-    useEffect(() => {
-        getData();
-    }, []);
-
-    const getData = () => {
-        try {
-            AsyncStorage.getItem('UserData')
-                .then(value => {
-                    if (value != null) {
-                        navigation.navigate('Stores');
-                    }
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
     const [name, setName] = useState('')
     const [pic, setPic] = useState("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [tokenId, setTokenId] = useState('')
-    const [loginData, setLoginData] = useState([])
+    const [isLoading, setLoading] = useState(false)
+    const [loginData, setLoginData] = useState(false)
 
     useEffect(async() => {
-        if(loginData){
-            await axios.get('https://dzilla.herokuapp.com/api/users/')
-            .then(response => {
-                response.data.map((currentuser) => 
-                    currentuser.email === email ? setName(currentuser.name) : ''
-                )                
-                let localuserdata = {
-                    name: name,
-                    email: email,
-                    pic: pic,
-                    token: tokenId
-                };
-                // console.log(localuserdata)
-                AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
-                navigation.navigate('Stores')
-            })
-            .catch((error) => {
-                console.log('ERROR - ', error);
-            })
-        }
+        // if(loginData){
+        // //     console.log('USERDATA - ', loginData)
+        //     await axios.get('https://dzilla.herokuapp.com/api/users/')
+        //     .then(response => {
+        //         response.data.map((currentuser) => 
+        //             currentuser.email === email ? setName(currentuser.name) : ''
+        //         )                
+        //         let localuserdata = {
+        //             name: name,
+        //             email: email,
+        //             pic: pic,
+        //             token: tokenId
+        //         };
+        //         console.log('localuserdata - ', localuserdata)
+        //         const jsonValue = JSON.stringify(localuserdata)
+        //         AsyncStorage.setItem('UserData', jsonValue);
+
+        //         navigation.navigate('Stores')
+        //     })
+        //     .catch((error) => {
+        //         console.log('ERROR - ', error);
+        //     })
+        // }
+        // else
+        //     console.log('sorry')
     }, [loginData])
 
     const submitHandler = async(e) => {
         e.preventDefault();   
         if(email && password){
             try {
+         
+                setLoading(true)   
 
                 const headers = {
                     'Content-Type': 'application/json'
                 }
-
-                // setLoading(true)
 
                 const user = JSON.stringify({
                     email: email,
@@ -208,21 +200,62 @@ const SignUp = ({navigation}) => {
                     headers: headers,
                     body: user
                 }
-                                
-                await axios.post('https://dzilla.herokuapp.com/api/users/login' , user, {headers: headers})
-                .then((res)=>{     
-                    console.log('LOGIN RESPONSE - ', res.data) 
-                    setTokenId(res.data.token)
-                    setLoginData(res.data)                   
-                }).catch(err=>{
-                    console.log(err)
-                })
 
-                // setLoading(false)
+                await axios.post('https://dzilla.herokuapp.com/api/users/login' , user, {headers: headers})
+                // const responseData = await response;
+                .then((response)=>{   
+                    // if(response.data)  
+                    // {
+                        console.log('LOGIN RESPONSE - ', response.data) 
+                        // setName(response.data.name);setEmail(response.data.email);setTokenId(response.data.token)
+                        // console.log('Values - ', name, email, tokenId )  
+                        let localuserdata = {
+                            name: response.data.name,
+                            email: response.data.email,
+                            pic: pic,
+                            token: response.data.tokenId
+                        };
+                        console.log('localuserdata - ', localuserdata)
+                        const jsonValue = JSON.stringify(localuserdata)
+                        AsyncStorage.setItem('UserData', jsonValue);
+
+                        navigation.navigate('Stores')            
+                        // if(name && email && tokenId){
+                        //     axios.get('https://dzilla.herokuapp.com/api/users/')
+                        //     .then(response => {
+                        //         response.data.map((currentuser) => 
+                        //             currentuser.email === email ? setName(currentuser.name) : ''
+                        //         )                
+                                // let localuserdata = {
+                                //     name: name,
+                                //     email: email,
+                                //     pic: pic,
+                                //     token: tokenId
+                                // };
+                                // console.log('localuserdata - ', localuserdata)
+                                // const jsonValue = JSON.stringify(localuserdata)
+                                // AsyncStorage.setItem('UserData', jsonValue);
+
+                                // navigation.navigate('Stores')
+                        //     })
+                        //     .catch((error) => {
+                        //         console.log('ERROR - ', error);
+                        //     })
+                        // }
+                    //     else
+                    //         console.log('sorry')
+        
+                    // }
+                }).catch(err=>{
+                    console.log(err);
+                    if(err == 401)
+                        Alert.alert('Alert', "User doesn't exists!")
+                }).finally(()=>setLoading(false))
             } 
             catch (error) {
                 console.error("getting error - ", error)
             }
+            // setLoading(false)
         }
         else{
             Alert.alert('Alert', 'invalid credentials')
@@ -241,19 +274,19 @@ const SignUp = ({navigation}) => {
                 {/* Email */}
 
                 <View style={{ marginTop: SIZES.padding * 3 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Email</Text>
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.body3 }}>Email</Text> */}
                     <TextInput
                         style={{
                             marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
+                            borderBottomColor: COLORS.black,
                             borderBottomWidth: 1,
                             height: 40,
-                            color: COLORS.white,
+                            color: COLORS.black,
                             ...FONTS.body3
                         }}
                         placeholder="Enter email"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
+                        placeholderTextColor={COLORS.black}
+                        selectionColor={COLORS.black}
                         value={email}
                         onChangeText={setEmail}
                     />
@@ -262,19 +295,19 @@ const SignUp = ({navigation}) => {
                 {/* Password */}
 
                 <View style={{ marginTop: SIZES.padding * 2 }}>
-                    <Text style={{ color: COLORS.lightGreen, ...FONTS.body3 }}>Password</Text>
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.body3 }}>Password</Text> */}
                     <TextInput
                         style={{
                             marginVertical: SIZES.padding,
-                            borderBottomColor: COLORS.white,
+                            borderBottomColor: COLORS.black,
                             borderBottomWidth: 1,
                             height: 40,
-                            color: COLORS.white,
+                            color: COLORS.black,
                             ...FONTS.body3
                         }}
                         placeholder="Enter Password"
-                        placeholderTextColor={COLORS.white}
-                        selectionColor={COLORS.white}
+                        placeholderTextColor={COLORS.black}
+                        selectionColor={COLORS.black}
                         secureTextEntry={!showPassword}
                         value={password}
                         onChangeText={setPassword}
@@ -294,7 +327,7 @@ const SignUp = ({navigation}) => {
                             style={{
                                 height: 20,
                                 width: 20,
-                                tintColor: COLORS.white
+                                tintColor: COLORS.black
                             }}
                         />
                     </TouchableOpacity>
@@ -306,7 +339,8 @@ const SignUp = ({navigation}) => {
 
     function renderButton() {
         return (
-            <View style={{ margin: SIZES.padding * 3 }}>
+            <View style={{ margin: SIZES.padding * 4,
+             marginHorizontal: SIZES.padding * 6 }}>
                 <TouchableOpacity
                     onPress={submitHandler}
                     style={{
@@ -317,7 +351,9 @@ const SignUp = ({navigation}) => {
                         justifyContent: 'center'
                     }}
                 >
-                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>Login</Text>
+                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>
+                    {isLoading ? <ActivityIndicator size="small" color="#fff" /> : 'Login'}
+                    </Text>
                 </TouchableOpacity>
             </View>
         )
@@ -332,7 +368,7 @@ const SignUp = ({navigation}) => {
                         <GoogleSigninButton
                             style={{width: 215, height: 58}}
                             size={GoogleSigninButton.Size.Wide}
-                            color={GoogleSigninButton.Color.Light}
+                            color={GoogleSigninButton.Color.Dark}
                             onPress={signIn}
                         /> :
                         <TouchableOpacity onPress={signOut}>
@@ -408,10 +444,10 @@ const SignUp = ({navigation}) => {
             behavior={Platform.OS === "ios" ? "padding" : null}
             style={{ flex: 1 }}
         >
-            <LinearGradient
+            {/* <LinearGradient
                 colors={[COLORS.lime, COLORS.emerald]}
                 style={{ flex: 1,  }}
-            >
+            > */}
                 <ScrollView>
                     {/* {renderHeader()} */}
                     {renderLogo()}
@@ -425,19 +461,30 @@ const SignUp = ({navigation}) => {
                             }}
                             onPress={() => navigation.navigate("SignUp")}
                         >
-                            <Text style={{ color: COLORS.white, ...FONTS.h4 }}>Not a member? Sign Up</Text>
+                            <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Not a member? Sign Up</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ margin: SIZES.padding * 2, alignItems:'center' }}>
-                        <Text style={{ color: COLORS.white, ...FONTS.h4 }}>
+                    {/* <View style={{ margin: SIZES.padding * 2, alignItems:'center' }}>
+                        <Text style={{ color: COLORS.black, ...FONTS.h4 }}>
                         OR</Text>
                     </View>
-                    {renderGoogleLogin()}
+                    {renderGoogleLogin()} */}
                 </ScrollView>
-            </LinearGradient>
+            {/* </LinearGradient> */}
             {/* {renderAreaCodesModal()} */}
         </KeyboardAvoidingView>
     )
 }
 
-export default SignUp
+const styles = StyleSheet.create({
+    text:{
+        fontFamily: 'Kufam-SemiBoldItalic',
+        fontSize: 48,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        marginBottom: 10,
+        color: '#051d5f',
+    }
+})
+
+export default Login

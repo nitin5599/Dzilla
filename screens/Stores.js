@@ -10,20 +10,23 @@ import {
     StyleSheet,
     Pressable,
     Alert,
-    RefreshControl
+    RefreshControl,
+    ActivityIndicator,
+    ScrollView
  } from 'react-native'
 import { COLORS, icons, images, FONTS, SIZES } from "../constants"
 import { CategoryCard, TrendingCard,  } from "../components";
 import { trendingOffers } from '../constants/trendingOffers'
 
 const Stores = ({navigation}) => {
-
-    const [status, setStatus] = useState('All')
-    const [datalist, setDataList] = useState([]);
     
     const [isLoading, setLoading] = useState(false);
 
+    const [status, setStatus] = useState('All')
+    const [datalist, setDataList] = useState([]);
+
     const fetchCategoriesData = () => {
+        setLoading(true)
         fetch('https://dzilla.herokuapp.com/api/category/')
          .then((response) => response.json())
          .then((json) => {
@@ -43,12 +46,13 @@ const Stores = ({navigation}) => {
         } catch (error) {
             console.log(error)
         }
-
+        // setLoading(true)
         // fetch('https://dzilla.herokuapp.com/api/product/')
         // .then((response) => response.json())
         // .then((json) => {
         //     setDataList(json)
-        //     ListCategories()
+        //     console.log(datalist)
+        //     // ListCategories()
         //   })
         // .catch((error) => console.error(error))
         // .finally(()=>setLoading(false))
@@ -82,7 +86,7 @@ const Stores = ({navigation}) => {
                 {/* Image */}
 
                 <TouchableOpacity
-                    onPress={()=> console.log('profile')}
+                    onPress={()=> console.log('notifications!')}
                 >
                     <Image
                         source={icons.bell}
@@ -232,9 +236,9 @@ const Stores = ({navigation}) => {
     }
 
     const categoryList = [
-        { id:1, status:'All' },
-        { id:2, status:'Visited' },
-        { id:3, status:'Favorites' }
+        {status:'All' },
+        {status:'Visited' },
+        {status:'Favorites' }
     ];
 
     // useEffect(() => {
@@ -243,17 +247,23 @@ const Stores = ({navigation}) => {
     // }, [status]);
     
     const setDataFilter = (currentStatus) => {
+        // console.log('DATALIST - ', datalist)
+        // if(currentStatus !== 'All'){
+            setDataList([...datalist.filter((e) => e.status === currentStatus)])
+            console.log('DATALIST - ', datalist)
+        // }else if(currentStatus === 'All'){
+        //     setDataList([...datalist.filter(e => e.status === currentStatus)])
+        // }
         setStatus(currentStatus)
-        setDataList([...datalist.filter(e => e.status === currentStatus)])
     }
     
     const ListCategories = () => {
 
         return (
             <View style={styles.categoryListContainer}>
-                {categoryList.map((e) => (
+                {categoryList.map((e, index) => (
                 <Pressable
-                    key={e.id}
+                    key={index}
                     onPress={() => setDataFilter(e.status)}
                 >
                     <Text
@@ -272,16 +282,17 @@ const Stores = ({navigation}) => {
     };
 
     const forNoList = () => {
-        if(status==='All'){
+        // if(status==='All'){
             return(
-                <View><Text>No shops at all</Text></View>
-        )}else if(status === 'Visited'){
-            return(
-                <View><Text>You've no Visited shops</Text></View>
-        )}else{
-            return(
-                <View><Text>You've no Favorites shops</Text></View>
-        )}
+                <View><Text style={{color: 'black'}}>No shops at all</Text></View>
+        )
+    // }else if(status === 'Visited'){
+    //         return(
+    //             <View><Text>You've no Visited shops</Text></View>
+    //     )}else{
+    //         return(
+    //             <View><Text>You've no Favorites shops</Text></View>
+    //     )}
     }
 
     const renderItem = ({item, index}) => {
@@ -299,49 +310,49 @@ const Stores = ({navigation}) => {
     }
     
     return (
-        <SafeAreaView
-            style={{
-                flex:1,
-                backgroundColor: COLORS.white
-            }}
-        >
-            <FlatList
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
-                // refreshing={isLoading}
-                // onRefresh={()=>fetchListData()}
-                data={datalist}
-                keyExtractor={item => item.id}
-                keyboardDismissMode='on-drag'
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <View>
-                        {/* Header */}
-                        {renderHeader()}
-                        
-                        {/* Categories */}
-                        {renderCategories()}
-                        
-                        {/* Trending Section */}
-                        {renderTrendingSection()}
+        <>
+            { isLoading 
+                ?
+                <ActivityIndicator style={{flex: 1,justifyContent:'center'}} 
+                    size="small" color="#0000ff" />
+                :         
+                <SafeAreaView
+                    style={{
+                        flex:1,
+                        backgroundColor: COLORS.white
+                    }}
+                >
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
+                        data={datalist}
+                        keyExtractor={item => item.id}
+                        ListHeaderComponent={
+                            <View>
+                                {renderHeader()}
+                                
+                                {renderCategories()}
+                                
+                                {renderTrendingSection()}
 
-                        {/* All, Visited & Fav */}
-                        {ListCategories()}
-                    </View>
-                }
-                renderItem={renderItem}
-                ListFooterComponent={
-                    <View style={{marginBottom:120}}/>
-                }
-            />
-        </SafeAreaView>
+                                {ListCategories()}
+                            </View>
+                        }
+                        renderItem={renderItem}
+                        ListFooterComponent={<View style={{marginBottom:120}}/>}
+                    />
+                </SafeAreaView>
+            }
+        </>
     )
 }
 
+/* STYLES */
+            
 const styles = StyleSheet.create({
 
     categoryListText: {
@@ -358,9 +369,12 @@ const styles = StyleSheet.create({
         borderTopRightRadius:5,
     },
     categoryListContainer: {
+        // alignSelf:'center',
+        // marginBottom: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 40,
+        // marginBottom: 100,
         marginLeft: 20,
         paddingHorizontal: 40,
         paddingVertical: 20,

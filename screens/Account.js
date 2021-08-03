@@ -26,17 +26,25 @@ const Account = ({navigation}) => {
         getData();
     }, []);
 
-    const getData = () => {
+    const getData = async() => {
+        // try {
+        //     const jsonValue = await AsyncStorage.getItem('UserData')
+        //     // return jsonValue != null ? JSON.parse(jsonValue) : null;
+        //     console.log(jsonValue != null ? JSON.parse(jsonValue) : null)
+        // } catch (error) {
+        //     console.log(error)
+        // }
         try {
-            AsyncStorage.getItem('UserData')
-                .then(value => {
-                    if (value != null) {
-                        let user = JSON.parse(value);
+            const jsonValue = await AsyncStorage.getItem('UserData')
+                // .then(value => {
+                    if (jsonValue !==null) {
+                        let user = JSON.parse(jsonValue);
+                        console.log('user = ', user)
                         setName(user.name);
                         setEmail(user.email);
                         setPic(user.pic);
                     }
-                })
+                // })
         } catch (error) {
             console.log(error);
         }
@@ -61,11 +69,12 @@ const Account = ({navigation}) => {
             const keyValue = await AsyncStorage.removeItem('UserData')
             // console.log("TOKEN 1 - ", await AsyncStorage.getItem('token'))
             // then(() =>{
-                // if(keyValue == null){
-                //     AsyncStorage.setItem('token', 'token')
-                // }
+                if(keyValue == null || keyValue == undefined || keyValue == ''){
+                    AsyncStorage.setItem('token', 'token')
+                    navigation.navigate('Login')
+                }
                 // console.log("TOKEN 2 - ", await AsyncStorage.getItem('token'))
-                navigation.navigate('Login')
+                
             // })
         }
         catch(error){
