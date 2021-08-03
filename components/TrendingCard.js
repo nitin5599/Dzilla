@@ -102,30 +102,19 @@ const RecipeCardInfo = ({recipeItem}) => {
 
 const TrendingCard = ({containerStyle, recipeItem, onPress}) => {
     return (
-        <TouchableOpacity
-            style={{
-                height: 350,
-                width: 250,
-                marginTop: SIZES.radius,
-                marginRight: 20,
-                borderRadius: SIZES.radius,
-                ...containerStyle
-            }}
-            onPress={onPress}
-            key={recipeItem.id}
-        >
+        <>
             {/* Item image */}
 
             <Image
                 source={recipeItem.image}
-                resizeMode='cover'
+                resizeMode='contain'
                 style={{
-                    width:250,
-                    height:350,
-                    borderRadius: SIZES.radius
+                    height:280,
+                    width:180,
+                    marginTop: 20
                 }}
             />
-        </TouchableOpacity>
+        </>
     )
 }
 

@@ -256,6 +256,7 @@ const Stores = ({navigation}) => {
         //     setDataList([...datalist.filter(e => e.status === currentStatus)])
         // }
             setStatus(currentStatus)
+            return [datalist]
     }
     
     const ListCategories = () => {
@@ -285,30 +286,32 @@ const Stores = ({navigation}) => {
 {/* </Pressable> */}
                 
     const forNoList = () => {
-        // if(status==='All'){
         return(
-            <View><Text style={{color: 'black'}}>No shops at all</Text></View>
+            <View>
+                <Text style={{color: 'black'}}>
+                No shops at all
+                </Text>
+            </View>
         )
-    // }else if(status === 'Visited'){
-    //         return(
-    //             <View><Text>You've no Visited shops</Text></View>
-    //     )}else{
-    //         return(
-    //             <View><Text>You've no Favorites shops</Text></View>
-    //     )}
     }
 
     const renderItem = ({item, index}) => {
         return (
-            ( datalist.length > 0 ) ? 
-                (<CategoryCard
+            datalist.length > 0 ? 
+                <CategoryCard
                     containerStyle={{
-                        marginHorizontal: SIZES.padding
+                        marginHorizontal: SIZES.padding,
                     }}
                     categoryItem={item}
                     key={index}
                     onPress={() => navigation.navigate('webView')}
-                />) : forNoList() 
+                /> :
+                <View style={{marginBottom:120}}>
+                    <Image source={icons.refer} style={{marginBottom: 50, height: 50, width: 50}}/>
+                    <Text style={{color: 'black'}}>
+                        No shops at all
+                    </Text>
+                </View>
         )
     }
     
@@ -333,7 +336,6 @@ const Stores = ({navigation}) => {
                             />
                         }
                         data={datalist}
-                        extraData={datalist}
                         keyExtractor={item => item.id}
                         ListHeaderComponent={
                             <View>
@@ -343,9 +345,20 @@ const Stores = ({navigation}) => {
                                 
                                 {renderTrendingSection()}
 
-                                {ListCategories()}
+                                {/* {ListCategories()} */}
+                                <View style={{
+                                    marginTop:20,
+                                }}>                
+                                    <Text
+                                        style={{
+                                            marginHorizontal: 15,
+                                            ...FONTS.h2
+                                        }}
+                                    >Show Now</Text>
+                                </View>
                             </View>
                         }
+                        extraData={datalist}
                         renderItem={renderItem}
                         ListFooterComponent={<View style={{marginBottom:120}}/>}
                     />
@@ -384,13 +397,13 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     item: {
-      margin: 20,
-      textAlign:'center',
+        margin: 20 ,
+        textAlign:'center',
     },
     itemPhoto: {
-      width: 140,
-      height: 140,
-      borderRadius: 70
+      width: 100,
+      height: 100,
+      borderRadius: 50
     },
     itemText: {
       color: COLORS.black,

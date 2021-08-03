@@ -29,7 +29,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                 flexDirection:'row',
                 alignItems:'center',
                 padding:10,
-                marginTop:10,
+                marginTop:20,
                 elevation: 5,
                 borderRadius: SIZES.radius,
                 backgroundColor: COLORS.white,
@@ -63,7 +63,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                 <Text
                     style={{
                         // flex:1,
-                        ...FONTS.h2
+                        ...FONTS.h3
                     }}
                 >
                     {categoryItem.name}
@@ -93,7 +93,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
             >
                 <Text
                     style={{
-                        ...FONTS.h2
+                        ...FONTS.h3
                     }}
                 >
                     {categoryItem.cashback+'%'}
@@ -110,7 +110,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
             </View>
 
             <View style={{
-                    width:'5%',
+                    // width:'5%',
                     alignItems: 'flex-start'
                 }}>  
                 <TouchableOpacity
