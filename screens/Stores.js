@@ -304,7 +304,7 @@ const Stores = ({navigation}) => {
                     }}
                     categoryItem={item}
                     key={index}
-                    onPress={() => navigation.navigate('webView')}
+                    onPress={() => navigation.navigate('gotostore', {storeImage: item.fileName})}
                 /> :
                 <View style={{marginBottom:120}}>
                     <Image source={icons.refer} style={{marginBottom: 50, height: 50, width: 50}}/>

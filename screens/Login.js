@@ -206,6 +206,7 @@ const Login = ({navigation}) => {
                 .then((response)=>{   
                     console.log('LOGIN RESPONSE - ', response.data) 
                     let localuserdata = {
+                        userid: response.data._id,
                         name: response.data.name,
                         email: response.data.email,
                         pic: pic,

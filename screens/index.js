@@ -8,5 +8,6 @@ import Invite from "./Invite";
 import Account from "./Account";
 import Bookmark from "./Bookmark";
 import webView from './webView';
+import GoToStore from './GoToStore';
 
-export {Home, Bookmark, SignUp, Login, Stores, Invite, Account, webView}
+export {Home, Bookmark, SignUp, Login, Stores, Invite, Account, webView, GoToStore}

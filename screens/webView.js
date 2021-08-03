@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import * as Progress from 'react-native-progress';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const webView = () => {
+const webView = ({route}) => {
   const [progress, setProgress] = useState(0);
   const [isLoaded, setLoaded] = useState(false);
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [id, setId] = useState('')
 
 //   const source = Platform.OS === 'ios' ? require('./assets/sample.html')
 //     : { uri: 'file:///android_asset/sample.html' };
@@ -13,6 +18,29 @@ const webView = () => {
   document.body.style.backgroundColor = 'orange';
   window.alert('This is javascript');
 `;
+
+  // useEffect(() => {
+  //   getData();
+  // }, []);
+
+  // const getData = async() => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('UserData')
+  //     if (jsonValue != null) {
+  //       let user = JSON.parse(jsonValue);
+  //       setName(user.name);
+  //       setEmail(user.email);
+  //       setId(user.userid);
+  //       console.log('webview user - ', id)
+  //     }
+  //   } catch (error) {
+  //       console.log(error);
+  //   }
+  // }
+
+  const {userid} = route.params
+  const user_id = userid.toString();
+  console.log(user_id)
 
   return <>
     {
@@ -26,12 +54,9 @@ const webView = () => {
         /> : null
     }
     <WebView
-      source={{
-        uri: 'https://google.com',
-        headers: { 'key': 'value' }
-      }}
-      // source={{ html: '<h1>This is a statsampleic HTML source!</h1>' }}
-      // source={source}
+      javaScriptEnabled={true}
+      domStorageEnabled={true}
+      source={{uri: `https://nitin5599.github.io/webpage?id=${user_id}`}}
       onError={(event) =>
         alert(`Webview error: ${event.nativeEvent.description}`)
       }
