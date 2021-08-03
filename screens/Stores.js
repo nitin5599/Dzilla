@@ -39,22 +39,23 @@ const Stores = ({navigation}) => {
     } 
 
     const fetchListData = async () => {
-        try {
-            const response = await fetch('https://dzilla.herokuapp.com/api/product/');
-            const responseData = await response.json();
-            setDataList(responseData)
-        } catch (error) {
-            console.log(error)
-        }
+        // try {
+        //     const response = await fetch('https://dzilla.herokuapp.com/api/product/');
+        //     const responseData = await response.json();
+        //     setDataList(responseData)
+        //     console.log('Product api Response - ',responseData)
+        // } catch (error) {
+        //     console.log(error)
+        // }
         // setLoading(true)
-        // fetch('https://dzilla.herokuapp.com/api/product/')
-        // .then((response) => response.json())
-        // .then((json) => {
-        //     setDataList(json)
-        //     console.log(datalist)
-        //     // ListCategories()
-        //   })
-        // .catch((error) => console.error(error))
+        await fetch('https://dzilla.herokuapp.com/api/product/')
+        .then((response) => response.json())
+        .then((json) => {
+            setDataList(json)
+            console.log('Product api Response - ',datalist)
+            // ListCategories()
+          })
+        .catch((error) => console.error(error))
         // .finally(()=>setLoading(false))
     }
 
@@ -249,24 +250,26 @@ const Stores = ({navigation}) => {
     const setDataFilter = (currentStatus) => {
         // console.log('DATALIST - ', datalist)
         // if(currentStatus !== 'All'){
-            setDataList([...datalist.filter((e) => e.status === currentStatus)])
-            console.log('DATALIST - ', datalist)
+            setDataList([...datalist.filter((e) => e.status == currentStatus)])
+            console.log(`DATALIST of ${currentStatus} - `, datalist)
         // }else if(currentStatus === 'All'){
         //     setDataList([...datalist.filter(e => e.status === currentStatus)])
         // }
-        setStatus(currentStatus)
+            setStatus(currentStatus)
     }
     
     const ListCategories = () => {
-
+ {/* <Pressable
+                    key={index}
+                    onPress={() => setDataFilter(e.status)}
+                > */}
         return (
             <View style={styles.categoryListContainer}>
                 {categoryList.map((e, index) => (
-                <Pressable
-                    key={index}
-                    onPress={() => setDataFilter(e.status)}
-                >
+               
                     <Text
+                        key={index}
+                        onPress={() => setDataFilter(e.status)}
                         style={[
                             styles.categoryListText,
                             e.status == 'Visited' ? styles.visitedTab : null,
@@ -275,16 +278,16 @@ const Stores = ({navigation}) => {
                     >
                         {e.status}
                     </Text>
-                </Pressable>
                 ))}
             </View>
         );
     };
-
+{/* </Pressable> */}
+                
     const forNoList = () => {
         // if(status==='All'){
-            return(
-                <View><Text style={{color: 'black'}}>No shops at all</Text></View>
+        return(
+            <View><Text style={{color: 'black'}}>No shops at all</Text></View>
         )
     // }else if(status === 'Visited'){
     //         return(
@@ -330,6 +333,7 @@ const Stores = ({navigation}) => {
                             />
                         }
                         data={datalist}
+                        extraData={datalist}
                         keyExtractor={item => item.id}
                         ListHeaderComponent={
                             <View>
@@ -369,12 +373,9 @@ const styles = StyleSheet.create({
         borderTopRightRadius:5,
     },
     categoryListContainer: {
-        // alignSelf:'center',
-        // marginBottom: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 40,
-        // marginBottom: 100,
         marginLeft: 20,
         paddingHorizontal: 40,
         paddingVertical: 20,

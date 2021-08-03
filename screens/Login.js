@@ -142,16 +142,16 @@ const Login = ({navigation}) => {
         )
     }
 
-    const [name, setName] = useState('')
+    // const [name, setName] = useState('')
     const [pic, setPic] = useState("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg");
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [tokenId, setTokenId] = useState('')
+    // const [tokenId, setTokenId] = useState('')
     const [isLoading, setLoading] = useState(false)
-    const [loginData, setLoginData] = useState(false)
+    // const [loginData, setLoginData] = useState(false)
 
-    useEffect(async() => {
+    // useEffect(async() => {
         // if(loginData){
         // //     console.log('USERDATA - ', loginData)
         //     await axios.get('https://dzilla.herokuapp.com/api/users/')
@@ -177,7 +177,7 @@ const Login = ({navigation}) => {
         // }
         // else
         //     console.log('sorry')
-    }, [loginData])
+    // }, [loginData])
 
     const submitHandler = async(e) => {
         e.preventDefault();   
@@ -204,48 +204,17 @@ const Login = ({navigation}) => {
                 await axios.post('https://dzilla.herokuapp.com/api/users/login' , user, {headers: headers})
                 // const responseData = await response;
                 .then((response)=>{   
-                    // if(response.data)  
-                    // {
-                        console.log('LOGIN RESPONSE - ', response.data) 
-                        // setName(response.data.name);setEmail(response.data.email);setTokenId(response.data.token)
-                        // console.log('Values - ', name, email, tokenId )  
-                        let localuserdata = {
-                            name: response.data.name,
-                            email: response.data.email,
-                            pic: pic,
-                            token: response.data.tokenId
-                        };
-                        console.log('localuserdata - ', localuserdata)
-                        const jsonValue = JSON.stringify(localuserdata)
-                        AsyncStorage.setItem('UserData', jsonValue);
-
-                        navigation.navigate('Stores')            
-                        // if(name && email && tokenId){
-                        //     axios.get('https://dzilla.herokuapp.com/api/users/')
-                        //     .then(response => {
-                        //         response.data.map((currentuser) => 
-                        //             currentuser.email === email ? setName(currentuser.name) : ''
-                        //         )                
-                                // let localuserdata = {
-                                //     name: name,
-                                //     email: email,
-                                //     pic: pic,
-                                //     token: tokenId
-                                // };
-                                // console.log('localuserdata - ', localuserdata)
-                                // const jsonValue = JSON.stringify(localuserdata)
-                                // AsyncStorage.setItem('UserData', jsonValue);
-
-                                // navigation.navigate('Stores')
-                        //     })
-                        //     .catch((error) => {
-                        //         console.log('ERROR - ', error);
-                        //     })
-                        // }
-                    //     else
-                    //         console.log('sorry')
-        
-                    // }
+                    console.log('LOGIN RESPONSE - ', response.data) 
+                    let localuserdata = {
+                        name: response.data.name,
+                        email: response.data.email,
+                        pic: pic,
+                        token: response.data.tokenId
+                    };
+                    console.log('localuserdata - ', localuserdata)
+                    const jsonValue = JSON.stringify(localuserdata)
+                    AsyncStorage.setItem('UserData', jsonValue);
+                    navigation.navigate('Stores') 
                 }).catch(err=>{
                     console.log(err);
                     if(err == 401)
