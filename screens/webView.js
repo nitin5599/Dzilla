@@ -56,11 +56,10 @@ const webView = ({route}) => {
     <WebView
       javaScriptEnabled={true}
       domStorageEnabled={true}
-      source={{uri: `https://nitin5599.github.io/webpage?id=${userid}&token=${token}`}}
+      source={{uri: `https://customer-page.herokuapp.com?id=${userid}&token=${token}`}}
       onError={(event) =>
         alert(`Webview error: ${event.nativeEvent.description}`)
       }
-      // injectedJavaScript={javascript}
       onMessage={(event) => {
         alert(event.nativeEvent.data);
       }}

@@ -8,7 +8,7 @@
 
  import React from 'react';
 
- import { SignUp, Login, Stores, Invite, Account, Bookmark, webView, GoToStore } from "./screens";
+ import { SignUp, Login, Stores, Invite, Account, Bookmark, webView, GoToStore, wishlist } from "./screens";
  import { createStackNavigator } from "@react-navigation/stack";
  import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
  import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -51,6 +51,7 @@
                 <Stack.Screen name="Stores" component={Tabs} />
                 <Stack.Screen name="webView" component={webView} />
                 <Stack.Screen name="gotostore" component={GoToStore} />
+                <Stack.Screen name="wishlist" component={wishlist} />
 
             </Stack.Navigator>
         </NavigationContainer>

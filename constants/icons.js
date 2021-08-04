@@ -41,11 +41,13 @@ const heartFilled = require("../assets/icons/heart-filled.png");
 const mail = require("../assets/icons/mail.png");
 const logout = require("../assets/icons/logout.png");
 const google = require("../assets/icons/google.png");
+const wishlist = require("../assets/icons/wishlist.png");
 
 
 
 export default {
     back,
+    wishlist,
     google,
     logout,
     mail,

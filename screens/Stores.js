@@ -87,14 +87,14 @@ const Stores = ({navigation}) => {
                 {/* Image */}
 
                 <TouchableOpacity
-                    onPress={()=> console.log('notifications!')}
+                    onPress={()=> navigation.navigate('wishlist')}
                 >
                     <Image
-                        source={icons.bell}
+                        source={icons.wishlist}
                         style={{
                             width:40,
                             height:40,
-                            borderRadius:20
+                            // borderRadius:20
                         }}
                     />
                 </TouchableOpacity>

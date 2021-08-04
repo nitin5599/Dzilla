@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { 
     View,
     Text,
@@ -11,17 +11,43 @@ import {
  } from 'react-native'
 
 import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
-
-import LottieView from "lottie-react-native";
- 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
     
-    const [isFav, setIsFav] = React.useState(false)
+    const [isFav, setIsFav] = useState(false)
+    const [cart, setCart] = useState([])
 
-    useEffect(() => {
-        
-    }, [isFav])
-
+    const onTapAddToWishlist = async(item) => {
+        // addToWishList(movie)
+        setIsFav(!isFav)
+    
+        if(isFav){
+            let newCart = [...cart]
+            newCart.push(item);
+            setCart(newCart)
+            try {
+                await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
+            } 
+            catch (error) {
+                // Error saving data
+                console.log(error)
+            }
+            
+            try {
+            const myArray = await AsyncStorage.getItem('wishlist');
+                if (myArray !== null) {
+                    // We have data!!
+                    console.log(JSON.parse(myArray));
+                }
+                } catch (error) {
+                console.log(error)
+                // Error retrieving data
+            }    
+        }
+        else{
+            console.log('no fav')
+        }
+    }
     return (
         <TouchableOpacity
             key={categoryItem._id}
@@ -114,7 +140,8 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                     alignItems: 'flex-start'
                 }}>  
                 <TouchableOpacity
-                    onPress={()=>setIsFav(!isFav)}
+                    // onPress={()=>setIsFav(!isFav)}
+                    onPress={() => onTapAddToWishlist(categoryItem)}
                 >
                     <Image source={isFav ? icons.heartFilled : icons.heart} 
                         style={{
