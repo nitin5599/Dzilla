@@ -11,6 +11,7 @@ import axios from 'axios';
 import Share from 'react-native-share';
 import files from "../constants/filebase64";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
 import { COLORS, icons, images } from "../constants"
 
@@ -25,7 +26,7 @@ const Account = ({navigation}) => {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [useIsFocused()]);
 
     const getData = async() => {
         // try {
@@ -37,16 +38,14 @@ const Account = ({navigation}) => {
         // }
         try {
             const jsonValue = await AsyncStorage.getItem('UserData')
-                // .then(value => {
-                    if (jsonValue !==null) {
-                        let user = JSON.parse(jsonValue);
-                        console.log('user = ', user)
-                        setName(user.name);
-                        setEmail(user.email);
-                        setPic(user.pic);
-                        setWallet(user.wallet);
-                    }
-                // })
+                if (jsonValue !==null) {
+                    let user = JSON.parse(jsonValue);
+                    console.log('user = ', user)
+                    setName(user.name);
+                    setEmail(user.email);
+                    setPic(user.pic);
+                    setWallet(user.wallet);
+                }
         } catch (error) {
             console.log(error);
         }
@@ -68,17 +67,9 @@ const Account = ({navigation}) => {
 
     const handleLogout = async () => {
         try {
-            await AsyncStorage.clear()
-            // console.log("TOKEN 1 - ", await AsyncStorage.getItem('token'))
-            // then(() =>{
-                // if(keyValue == null || keyValue == undefined || keyValue == ''){
-                //     AsyncStorage.setItem('token', 'token')
-                // }
-                    navigation.navigate('Login')
-                
-                // console.log("TOKEN 2 - ", await AsyncStorage.getItem('token'))
-                
-            // })
+            // await AsyncStorage.clear()
+            await AsyncStorage.removeItem('UserData')
+            navigation.navigate('Login')
         }
         catch(error){
             console.log(error)
@@ -93,25 +84,51 @@ const Account = ({navigation}) => {
     
     const [refreshing, setRefreshing] = React.useState(false);
 
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = React.useCallback(async() => {
         setRefreshing(true);
-        axios.get('https://dzilla.herokuapp.com/api/users/')
-            .then(response => {
-                response.data.map((currentuser) => 
-                    currentuser.email === email ? setName(currentuser.name) : ''
-                )                
-                let localuserdata = {
-                    name: name,
-                    email: email,
-                    pic: pic,
-                };
-                // console.log(localuserdata)
-                AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
-                // navigation.navigate('Stores')
-            })
-            .catch((error) => {
-                console.log('ERROR - ', error);
-            })  
+        // getData()
+        fetch('https://dzilla.herokuapp.com/api/users/')
+        .then(response => 
+            // response.json()
+            console.log(response)
+            // {
+            //     response.data.map((currentuser) => 
+            //         currentuser.email === email ? setName(currentuser.name) : ''
+            //     )                
+            //     let localuserdata = {
+            //         name: response.data.name,
+            //         email: response.data.email,
+            //         pic: response.data.pic,
+            //         wallet: response.data.wallet
+            //     }
+            //     console.log('localuserdata-', localuserdata)
+            // }
+        )
+        // .then((json) => {
+        //     setDataList(json)
+        //     console.log('Product api Response - ', json)
+        //     // ListCategories()
+        //     setLoading(false)
+        // })
+        .catch((error) => console.error(error))
+        // axios.get('https://dzilla.herokuapp.com/api/users/')
+        //     .then(response => {
+                // response.data.map((currentuser) => 
+                //     currentuser.email === email ? setName(currentuser.name) : ''
+                // )                
+                // let localuserdata = {
+                //     name: name,
+                //     email: email,
+                //     pic: pic,
+
+                // };
+        //         // console.log(localuserdata)
+        //         AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
+        //         // navigation.navigate('Stores')
+        //     })
+        //     .catch((error) => {
+        //         console.log('ERROR - ', error);
+        //     })  
         wait(2000).then(() => setRefreshing(false));
     }, []);
     

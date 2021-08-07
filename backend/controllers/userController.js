@@ -20,9 +20,12 @@ const authUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.send(401)
-  //   .json({
-  //     errorMessage: '401'
+    res.status(404)
+    res.send({
+      error:'not found'
+    })
+  //   res.status(500||401).json({
+  //     errorMessage: `401`
   //  });
     throw new Error("Invalid Credentials!");
   }
