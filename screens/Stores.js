@@ -26,6 +26,8 @@ const Stores = ({navigation}) => {
     const [status, setStatus] = useState('All')
     const [datalist, setDataList] = useState([]);
 
+    const [allproductswishlist, setAllProductsWishlist] = useState([]);
+
     const fetchCategoriesData = () => {
         setLoading(true)
         fetch('https://dzilla.herokuapp.com/api/category/')
@@ -36,19 +38,15 @@ const Stores = ({navigation}) => {
          .catch((error) => {
             console.error(error)
             Alert.alert("Err", "Something went wrong!")    
-        }).finally(()=>setLoading(false))
+        })
     } 
 
     const fetchListData = async () => {
-        // try {
-        //     const response = await fetch('https://dzilla.herokuapp.com/api/product/');
-        //     const responseData = await response.json();
-        //     setDataList(responseData)
-        //     console.log('Product api Response - ',responseData)
-        // } catch (error) {
-        //     console.log(error)
-        // }
-        // setLoading(true)
+        
+        let allproducts = [];
+        const arr = await AsyncStorage.getItem('wishlist');
+        allproducts=[...JSON.parse(arr)];
+        setAllProductsWishlist(allproducts)
         await fetch('https://dzilla.herokuapp.com/api/product/')
         .then((response) => response.json())
         .then((json) => {
@@ -57,12 +55,14 @@ const Stores = ({navigation}) => {
             // ListCategories()
           })
         .catch((error) => console.error(error))
-        // .finally(()=>setLoading(false))
+        .finally(()=>setLoading(false))
     }
 
+    
     useEffect(() => {
         fetchCategoriesData()
         fetchListData()
+        // Some()
     }, [])
     
     function renderHeader(){
@@ -297,23 +297,23 @@ const Stores = ({navigation}) => {
     }
 
     const checkWishlist= async (item)=>{
-        console.log('item - ', item)
+        // console.log('item - ', item)
         try {
-            if(item._id == '60ffdafc5220aa00040b2642')
-            {
-                let pro = [];
-                pro.push(item);
-                AsyncStorage.setItem('wishlist', pro);
-            }    
-            // let allproducts = [];
-            // const arr = await AsyncStorage.getItem('wishlist');
-            // allproducts=[...JSON.parse(arr)];
+            // if(item._id == '60ffdafc5220aa00040b2642')
+            // {
+            //     let pro = [];
+            //     pro.push(item);
+            //     AsyncStorage.setItem('wishlist', JSON.stringify(pro));
+            // }    
             // console.log('wishlist - ',allproducts)
-            // for (let index = 0; index < allproducts.length; index++) {
-            //     if(allproducts[index]._id === item._id) 
-            //        return true
-            // }
-            // return false;
+            for (let index = 0; index < allproductswishlist.length; index++) {
+                if(allproductswishlist[index]._id === item._id) {
+                    // console.log('item present - ', item)
+                   return true}
+                   else
+                   return false;
+            }
+            return false;
             // const res = [...allproducts.filter((e) => e._id === item._id)]
             // console.log(item.name, '=>', res)
         } catch (error) {
@@ -369,9 +369,9 @@ const Stores = ({navigation}) => {
                             <View>
                                 {renderHeader()}
                                 
-                                {renderCategories()}
+                                {/* {renderCategories()} */}
                                 
-                                {renderTrendingSection()}
+                                {/* {renderTrendingSection()} */}
 
                                 {/* {ListCategories()} */}
                                 <View style={{

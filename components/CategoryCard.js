@@ -14,11 +14,11 @@ import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
     
-    const [isFav, setIsFav] = useState(false)
+    const [isFav, setIsFav] = useState(wishlist)
     const [cart, setCart] = useState([])
     useEffect(() => {
-        console.log('present in wishlist - ', wishlist._W)
-        console.log(categoryItem)
+        console.log('present in wishlist - ', wishlist)
+        // console.log(categoryItem)
         // let arr = []
         // arr.push(categoryItem)
         // console.log(arr)
@@ -34,30 +34,48 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
         //     ...item
         // }
         // console.log(newitem)
-        // if(newitem.isFav === true){
-        //     let newCart = []
-        //     newCart.push(newitem);
-        //     setCart(newCart)
-        //     try {
-        //         await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
-        //     } 
-        //     catch (error) {
-        //         console.log(error)
-        //     }
+        let allproducts = [];
+        const arr = await AsyncStorage.getItem('wishlist');
+        allproducts=[...JSON.parse(arr)];
             
-        //     try {
-        //         const myArray = await AsyncStorage.getItem('wishlist');
-        //         if (myArray !== null) {
-        //             console.log(JSON.parse(myArray));
-        //         }
-        //     } catch (error) {
-        //         console.log(error)
-        //     }    
-        // }
-        // else{
-        //     console.log('no fav')
-        // }
-        // setIsFav(!isFav)        
+        if(isFav === true){
+            allproducts.splice(
+                allproducts.findIndex(a => a._id === categoryItem._id) , 1)
+               await AsyncStorage.setItem('wishlist', JSON.stringify(allproducts));
+                setIsFav(!isFav);
+            // for (let index = 0; index < allproducts.length; index++) {
+            //     if(allproducts[index]._id === item._id) {
+            //         console.log('item present - ', item)
+            //        return true
+            //     }
+            //        else
+            //        return false;
+            // }
+            // let newCart = []
+            // newCart.push(newitem);
+            // setCart(newCart)
+            // try {
+            //     await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
+            // } 
+            // catch (error) {
+            //     console.log(error)
+            // }
+            
+            // try {
+            //     const myArray = await AsyncStorage.getItem('wishlist');
+            //     if (myArray !== null) {
+            //         console.log(JSON.parse(myArray));
+            //     }
+            // } catch (error) {
+            //     console.log(error)
+            // }    
+        }
+        else{
+            allproducts.push(categoryItem);
+           await AsyncStorage.setItem('wishlist', JSON.stringify(allproducts));
+        
+           setIsFav(!isFav)
+        }        
     }
 
     return (
