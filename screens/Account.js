@@ -18,6 +18,7 @@ const Account = ({navigation}) => {
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [wallet, setWallet] = useState('')
     const [tokenId, setTokenId] = useState('')
     const [pic, setPic] = useState('https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg')
     const [isLoading, setLoading] = useState(false);
@@ -43,6 +44,7 @@ const Account = ({navigation}) => {
                         setName(user.name);
                         setEmail(user.email);
                         setPic(user.pic);
+                        setWallet(user.wallet);
                     }
                 // })
         } catch (error) {
@@ -66,13 +68,14 @@ const Account = ({navigation}) => {
 
     const handleLogout = async () => {
         try {
-            const keyValue = await AsyncStorage.removeItem('UserData')
+            await AsyncStorage.clear()
             // console.log("TOKEN 1 - ", await AsyncStorage.getItem('token'))
             // then(() =>{
-                if(keyValue == null || keyValue == undefined || keyValue == ''){
-                    AsyncStorage.setItem('token', 'token')
+                // if(keyValue == null || keyValue == undefined || keyValue == ''){
+                //     AsyncStorage.setItem('token', 'token')
+                // }
                     navigation.navigate('Login')
-                }
+                
                 // console.log("TOKEN 2 - ", await AsyncStorage.getItem('token'))
                 
             // })
@@ -173,7 +176,7 @@ const Account = ({navigation}) => {
                         }
                     ]}
                 >
-                    <Title>₹140.50</Title>
+                    <Title>₹{wallet}</Title>
                     <Caption style={{fontSize: 16}}>Wallet</Caption>
                 </View>
 

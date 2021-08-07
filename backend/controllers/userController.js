@@ -46,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     pic,
-    wallet: ''
+    wallet: '0'
   });
 
   if (user) {
@@ -73,33 +73,47 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
   // Request headers you wish to allow
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-   
-  const user = await User.findById(req.user._id);
+  console.log('params-',req.params)
+  const user = await User.findByIdAndUpdate(req.params.id,  {
+    $set: req.body
+  }, (error, data) => {
+    if (error) {        
+      console.log(error)
+      return next(error);
+    } else {
+      res.status(204)
+      res.json({
+        successMessage: `wallet updated successfully !`,
+      })
+      console.log('wallet updated successfully !') 
+      }
+  });
 
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.pic = req.body.pic || user.pic;
-    user.wallet = req.body.wallet || user.wallet;
+  // if (user) {
+  //   // user.name = req.body.name || user.name;
+  //   // user.email = req.body.email || user.email;
+  //   // user.pic = req.body.pic || user.pic;
+
+  //   user.wallet = req.params.wallet || user.wallet;
     
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
+  //   // if (req.body.password) {
+  //   //   user.password = req.body.password;
+  //   // }
 
-    const updatedUser = await user.save();
+  //  await User.save();
 
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      pic: updatedUser.pic,
-      wallet: updatedUser.wallet,
-      token: generateToken(updatedUser._id),
-    });
-  } else {
-    res.status(404);
-    throw new Error("User Not Found");
-  }
+  //   // res.json({
+  //   //   _id: updatedUser._id,
+  //   //   name: updatedUser.name,
+  //   //   email: updatedUser.email,
+  //   //   pic: updatedUser.pic,
+  //   //   wallet: updatedUser.wallet,
+  //   //   token: generateToken(updatedUser._id),
+  //   // });
+  // } else {
+  //   res.status(404);
+  //   throw new Error("User Not Found");
+  // }
 });
 
 const getUser = asyncHandler(async (req, res) => {
