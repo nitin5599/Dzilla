@@ -12,7 +12,7 @@ import {
 
 import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist }) => {
+const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChange }) => {
 
     const [isFav, setIsFav] = useState(wishlist)
     const [cart, setCart] = useState([])
@@ -38,6 +38,7 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist }) => {
 
             setIsFav(!isFav)
         }
+        onChange()
     }
 
     return (

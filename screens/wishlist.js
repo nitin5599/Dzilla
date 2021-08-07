@@ -53,6 +53,9 @@ const wishlist = () => {
                     categoryItem={item}
                     wishlist={true}
                     key={index}
+                    onChange= {() => {
+                        setDataList([])
+                        fetchData()}}
                     onPress={() => navigation.navigate('gotostore', {storeImage: item.fileName})}
                 /> :
                 <View style={{marginBottom:120}}>
