@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import { 
+import React, { useEffect, useState } from 'react'
+import {
     View,
     Text,
     TouchableOpacity,
@@ -8,84 +8,46 @@ import {
     SafeAreaView,
     FlatList,
     StyleSheet
- } from 'react-native'
+} from 'react-native'
 
 import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
-    
+const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist }) => {
+
     const [isFav, setIsFav] = useState(wishlist)
     const [cart, setCart] = useState([])
     useEffect(() => {
         console.log('present in wishlist - ', wishlist)
-        // console.log(categoryItem)
-        // let arr = []
-        // arr.push(categoryItem)
-        // console.log(arr)
-        // arr.map((itm, index) => {
-        //     itm.isFav = wishlist._W
-        //     return {...itm}
-        // })
-        // console.log('arr data -> ', arr)
     }, [])
-    const onTapAddToWishlist = async(item) => {
-        // const newitem = {
-        //     isFav: !isFav,
-        //     ...item
-        // }
-        // console.log(newitem)
-        let allproducts = [];
-        const arr = await AsyncStorage.getItem('wishlist');
-        allproducts=[...JSON.parse(arr)];
-            
-        if(isFav === true){
-            allproducts.splice(
-                allproducts.findIndex(a => a._id === categoryItem._id) , 1)
-               await AsyncStorage.setItem('wishlist', JSON.stringify(allproducts));
-                setIsFav(!isFav);
-            // for (let index = 0; index < allproducts.length; index++) {
-            //     if(allproducts[index]._id === item._id) {
-            //         console.log('item present - ', item)
-            //        return true
-            //     }
-            //        else
-            //        return false;
-            // }
-            // let newCart = []
-            // newCart.push(newitem);
-            // setCart(newCart)
-            // try {
-            //     await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
-            // } 
-            // catch (error) {
-            //     console.log(error)
-            // }
-            
-            // try {
-            //     const myArray = await AsyncStorage.getItem('wishlist');
-            //     if (myArray !== null) {
-            //         console.log(JSON.parse(myArray));
-            //     }
-            // } catch (error) {
-            //     console.log(error)
-            // }    
+    const onTapAddToWishlist = async (item) => {
+        var arr = await AsyncStorage.getItem('wishlist');
+        if (arr === null) {
+            arr = []
+        }else{
+            arr = JSON.parse(arr)
         }
-        else{
-            allproducts.push(categoryItem);
-           await AsyncStorage.setItem('wishlist', JSON.stringify(allproducts));
-        
-           setIsFav(!isFav)
-        }        
+        if (isFav) {
+            arr.splice(
+                arr.findIndex(a => a._id === categoryItem._id), 1)
+            await AsyncStorage.setItem('wishlist', JSON.stringify(arr));
+            setIsFav(!isFav);
+        }
+        else {
+            arr.push(categoryItem);
+            await AsyncStorage.setItem('wishlist', JSON.stringify(arr));
+
+            setIsFav(!isFav)
+        }
     }
 
     return (
         <TouchableOpacity
             key={categoryItem._id}
             style={{
-                flexDirection:'row',
-                alignItems:'center',
-                padding:10,
-                marginTop:20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: 10,
+                marginTop: 20,
                 elevation: 5,
                 borderRadius: SIZES.radius,
                 backgroundColor: COLORS.white,
@@ -96,12 +58,12 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
             {/* Image */}
 
             <Image
-                source={{uri: categoryItem.fileName}}
+                source={{ uri: categoryItem.fileName }}
                 resizeMode='contain'
-                
+
                 style={{
-                    width:100,
-                    height:100,
+                    width: 100,
+                    height: 100,
                     borderRadius: SIZES.radius
                 }}
             />
@@ -110,8 +72,8 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
 
             <View
                 style={{
-                    width:'45%',
-                    paddingHorizontal:30,
+                    width: '45%',
+                    paddingHorizontal: 30,
                     alignItems: 'flex-start'
                 }}
             >
@@ -132,18 +94,18 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
                     style={{
                         color: COLORS.lightGray2,
                         ...FONTS.body4,
-                        
+
                     }}
                 >
                     {categoryItem.description}
                 </Text>
             </View>
-            
+
             {/* cashback */}
-            
+
             <View
                 style={{
-                    width:'20%',
+                    width: '20%',
                     alignItems: 'flex-start'
                 }}
             >
@@ -152,7 +114,7 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
                         ...FONTS.h3
                     }}
                 >
-                    {categoryItem.cashback+'%'}
+                    {categoryItem.cashback + '%'}
                 </Text>
 
                 <Text
@@ -166,22 +128,22 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
             </View>
 
             <View style={{
-                    // width:'5%',
-                    alignItems: 'flex-start'
-                }}>  
+                // width:'5%',
+                alignItems: 'flex-start'
+            }}>
                 <TouchableOpacity
                     onPress={() => onTapAddToWishlist(categoryItem)}
                 >
-                    <Image source={isFav ? icons.heartFilled : icons.heart} 
+                    <Image source={isFav ? icons.heartFilled : icons.heart}
                         style={{
-                            width:25,
-                            height:25,
-                            tintColor:'#df245e'
-                        }}                        
+                            width: 25,
+                            height: 25,
+                            tintColor: '#df245e'
+                        }}
                     />
-                </TouchableOpacity>              
+                </TouchableOpacity>
             </View>
-            
+
 
         </TouchableOpacity>
     )
@@ -192,15 +154,15 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         tintColor: "#6e7f8d",
-      },
-      heartFilled: {
+    },
+    heartFilled: {
         tintColor: "#df245e",
-      },
-      heartLottie: {
+    },
+    heartLottie: {
         width: 50,
         height: 50,
         marginLeft: -5,
-      },
+    },
 })
 
 export default CategoryCard

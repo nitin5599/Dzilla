@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { 
+import React, { useState, useEffect } from 'react'
+import {
     View,
     Text,
     TouchableOpacity,
@@ -13,88 +13,97 @@ import {
     RefreshControl,
     ActivityIndicator,
     ScrollView
- } from 'react-native'
+} from 'react-native'
 import { COLORS, icons, images, FONTS, SIZES } from "../constants"
-import { CategoryCard, TrendingCard,  } from "../components";
+import { CategoryCard, TrendingCard, } from "../components";
 import { trendingOffers } from '../constants/trendingOffers'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
-const Stores = ({navigation}) => {
-    
-    const [isLoading, setLoading] = useState(false);
+const Stores = ({ navigation }) => {
+
+    const [isLoading, setLoading] = useState(true);
 
     const [status, setStatus] = useState('All')
     const [datalist, setDataList] = useState([]);
 
     const [allproductswishlist, setAllProductsWishlist] = useState([]);
 
-    const fetchCategoriesData = () => {
-        setLoading(true)
-        fetch('https://dzilla.herokuapp.com/api/category/')
-         .then((response) => response.json())
-         .then((json) => {
-            setCategoriesData(json)
-        })
-         .catch((error) => {
-            console.error(error)
-            Alert.alert("Err", "Something went wrong!")    
-        })
-    } 
+    const fetchCategoriesData =  async() => {
+        await fetch('https://dzilla.herokuapp.com/api/category/')
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json)
+                setCategoriesData(json)
 
-    const fetchListData = async () => {
-        
-        let allproducts = [];
-        const arr = await AsyncStorage.getItem('wishlist');
-        allproducts=[...JSON.parse(arr)];
-        setAllProductsWishlist(allproducts)
-        await fetch('https://dzilla.herokuapp.com/api/product/')
-        .then((response) => response.json())
-        .then((json) => {
-            setDataList(json)
-            console.log('Product api Response - ',datalist)
-            // ListCategories()
-          })
-        .catch((error) => console.error(error))
-        .finally(()=>setLoading(false))
+            })
+            .catch((error) => {
+                console.error(error)
+                Alert.alert("Err", "Something went wrong!")
+            })
     }
 
-    
+    const fetchListData = async () => {
+
+        var arr = await AsyncStorage.getItem('wishlist');
+
+        if (arr === null) {
+            arr = []
+        }else{
+            arr = JSON.parse(arr)
+        }
+        console.log('ITEMSSSS - ', arr)
+
+        setAllProductsWishlist(arr)
+        await fetch('https://dzilla.herokuapp.com/api/product/')
+            .then((response) => response.json())
+            .then((json) => {
+                setDataList(json)
+                console.log('Product api Response - ', json)
+                // ListCategories()
+                setLoading(false)
+            })
+            .catch((error) => console.error(error))
+    }
+
+
     useEffect(() => {
+        setLoading(true)
         fetchCategoriesData()
         fetchListData()
         // Some()
-    }, [])
-    
-    function renderHeader(){
+    }, [useIsFocused()])
+
+    function renderHeader() {
         return (
             <View
                 style={{
-                    flexDirection:'row',
+                    flexDirection: 'row',
                     marginHorizontal: 10,
-                    alignItems:'center',
-                    height:80
+                    alignItems: 'center',
+                    height: 80
                 }}
             >
                 {/* Text */}
 
                 <View
                     style={{
-                        flex:1
+                        flex: 1
                     }}
                 >
-                {renderSearchBar()}
+                    {renderSearchBar()}
                 </View>
-                
+
                 {/* Image */}
 
                 <TouchableOpacity
-                    onPress={()=> navigation.navigate('wishlist')}
+                    onPress={() => navigation.navigate('wishlist')}
                 >
                     <Image
                         source={icons.wishlist}
                         style={{
-                            width:40,
-                            height:40,
+                            width: 40,
+                            height: 40,
                             // borderRadius:20
                         }}
                     />
@@ -103,13 +112,13 @@ const Stores = ({navigation}) => {
         )
     }
 
-    function renderSearchBar(){
+    function renderSearchBar() {
         return (
             <View
                 style={{
-                    flexDirection:'row',
-                    height:50,
-                    alignItems:'center',
+                    flexDirection: 'row',
+                    height: 50,
+                    alignItems: 'center',
                     marginHorizontal: SIZES.padding,
                     paddingHorizontal: SIZES.radius,
                     borderRadius: 10,
@@ -119,15 +128,15 @@ const Stores = ({navigation}) => {
                 <Image
                     source={icons.search}
                     style={{
-                        width:20,
-                        height:20,
+                        width: 20,
+                        height: 20,
                         tintColor: COLORS.gray
                     }}
                 />
-                
+
                 <TextInput
                     style={{
-                        marginLeft: SIZES.radius*4,
+                        marginLeft: SIZES.radius * 4,
                         ...FONTS.body2
                     }}
                     placeholderTextColor={COLORS.gray}
@@ -137,11 +146,11 @@ const Stores = ({navigation}) => {
         )
     }
 
-    function renderTrendingSection(){
+    function renderTrendingSection() {
         return (
-            <View 
+            <View
                 style={{
-                    marginTop:20,
+                    marginTop: 20,
                 }}
             >
                 <Text
@@ -156,7 +165,7 @@ const Stores = ({navigation}) => {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     keyExtractor={item => item.id}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                         return (
                             <TrendingCard
                                 containerStyle={{
@@ -174,9 +183,9 @@ const Stores = ({navigation}) => {
 
     const [categoriesData, setCategoriesData] = useState([]);
     const [refreshing, setRefreshing] = React.useState(false);
-    
+
     const wait = (timeout) => {
-        return new Promise(resolve => setTimeout(resolve, timeout));        
+        return new Promise(resolve => setTimeout(resolve, timeout));
     }
 
     const onRefresh = React.useCallback(() => {
@@ -187,34 +196,34 @@ const Stores = ({navigation}) => {
 
     const ListItem = ({ item }) => {
         return (
-          <View style={styles.item} key={item._id}>
-            <Image
-              source={{uri: item.categoryImage}}
-              style={styles.itemPhoto}
-              resizeMode="cover"
-            />
-            <Text style={styles.itemText}>{item.name}</Text>
-          </View>
+            <View style={styles.item} key={item._id}>
+                <Image
+                    source={{ uri: item.categoryImage }}
+                    style={styles.itemPhoto}
+                    resizeMode="cover"
+                />
+                <Text style={styles.itemText}>{item.name}</Text>
+            </View>
         );
     };
 
-    const renderCategoryList = ({item, index}) => {
+    const renderCategoryList = ({ item, index }) => {
         return (
-            <ListItem 
+            <ListItem
                 containerStyle={{
-                    margin: SIZES.padding 
+                    margin: SIZES.padding
                 }}
-                item={item} 
+                item={item}
                 key={index}
             />
         )
     }
-    
-    function renderCategories(){
+
+    function renderCategories() {
         return (
-            <View 
+            <View
                 style={{
-                    marginTop:20,
+                    marginTop: 20,
                 }}
             >
                 <Text
@@ -238,37 +247,37 @@ const Stores = ({navigation}) => {
     }
 
     const categoryList = [
-        {status:'All' },
-        {status:'Visited' },
-        {status:'Favorites' }
+        { status: 'All' },
+        { status: 'Visited' },
+        { status: 'Favorites' }
     ];
 
     // useEffect(() => {
     //     setDataFilter(status)
     //     // fetchListData()
     // }, [status]);
-    
+
     const setDataFilter = (currentStatus) => {
         // console.log('DATALIST - ', datalist)
         // if(currentStatus !== 'All'){
-            setDataList([...datalist.filter((e) => e.status == currentStatus)])
-            console.log(`DATALIST of ${currentStatus} - `, datalist)
+        setDataList([...datalist.filter((e) => e.status == currentStatus)])
+        console.log(`DATALIST of ${currentStatus} - `, datalist)
         // }else if(currentStatus === 'All'){
         //     setDataList([...datalist.filter(e => e.status === currentStatus)])
         // }
-            setStatus(currentStatus)
-            return [datalist]
+        setStatus(currentStatus)
+        return [datalist]
     }
-    
+
     const ListCategories = () => {
- {/* <Pressable
+        {/* <Pressable
                     key={index}
                     onPress={() => setDataFilter(e.status)}
                 > */}
         return (
             <View style={styles.categoryListContainer}>
                 {categoryList.map((e, index) => (
-               
+
                     <Text
                         key={index}
                         onPress={() => setDataFilter(e.status)}
@@ -284,47 +293,34 @@ const Stores = ({navigation}) => {
             </View>
         );
     };
-{/* </Pressable> */}
-                
+    {/* </Pressable> */ }
+
     const forNoList = () => {
-        return(
+        return (
             <View>
-                <Text style={{color: 'black'}}>
-                No shops at all
+                <Text style={{ color: 'black' }}>
+                    No shops at all
                 </Text>
             </View>
         )
     }
 
-    const checkWishlist= async (item)=>{
-        // console.log('item - ', item)
+    const checkWishlist =  (item) => {
+        console.log(allproductswishlist[0])
+
         try {
-            // if(item._id == '60ffdafc5220aa00040b2642')
-            // {
-            //     let pro = [];
-            //     pro.push(item);
-            //     AsyncStorage.setItem('wishlist', JSON.stringify(pro));
-            // }    
-            // console.log('wishlist - ',allproducts)
-            for (let index = 0; index < allproductswishlist.length; index++) {
-                if(allproductswishlist[index]._id === item._id) {
-                    // console.log('item present - ', item)
-                   return true}
-                   else
-                   return false;
-            }
-            return false;
-            // const res = [...allproducts.filter((e) => e._id === item._id)]
-            // console.log(item.name, '=>', res)
+            const res = allproductswishlist.some(el => el._id === item._id);
+            console.log(item.name, '=>', res)
+            return res
         } catch (error) {
-            console.log('wishlist error - ',error)
-        }        
+            console.log('wishlist error - ', error)
+        }
         return true;
     }
 
-    const renderItem = ({item, index}) => {
+    const renderItem = ({ item, index }) => {
         return (
-            datalist.length > 0 ? 
+            datalist.length > 0 ?
                 <CategoryCard
                     containerStyle={{
                         marginHorizontal: SIZES.padding,
@@ -332,27 +328,27 @@ const Stores = ({navigation}) => {
                     categoryItem={item}
                     wishlist={checkWishlist(item)}
                     key={index}
-                    onPress={() => navigation.navigate('gotostore', {storeImage: item.fileName})}
+                    onPress={() => navigation.navigate('gotostore', { storeImage: item.fileName })}
                 /> :
-                <View style={{marginBottom:120}}>
-                    <Image source={icons.refer} style={{marginBottom: 50, height: 50, width: 50}}/>
-                    <Text style={{color: 'black'}}>
+                <View style={{ marginBottom: 120 }}>
+                    <Image source={icons.refer} style={{ marginBottom: 50, height: 50, width: 50 }} />
+                    <Text style={{ color: 'black' }}>
                         No shops at all
                     </Text>
                 </View>
         )
     }
-    
+
     return (
         <>
-            { isLoading 
+            {isLoading
                 ?
-                <ActivityIndicator style={{flex: 1,justifyContent:'center'}} 
-                    size="small" color="#0000ff" />
-                :         
+                <ActivityIndicator style={{ flex: 1, justifyContent: 'center' }}
+                    size="large" color="red" />
+                :
                 <SafeAreaView
                     style={{
-                        flex:1,
+                        flex: 1,
                         backgroundColor: COLORS.white
                     }}
                 >
@@ -368,15 +364,15 @@ const Stores = ({navigation}) => {
                         ListHeaderComponent={
                             <View>
                                 {renderHeader()}
-                                
+
                                 {/* {renderCategories()} */}
-                                
+
                                 {/* {renderTrendingSection()} */}
 
                                 {/* {ListCategories()} */}
                                 <View style={{
-                                    marginTop:20,
-                                }}>                
+                                    marginTop: 20,
+                                }}>
                                     <Text
                                         style={{
                                             marginHorizontal: 15,
@@ -388,7 +384,7 @@ const Stores = ({navigation}) => {
                         }
                         extraData={datalist}
                         renderItem={renderItem}
-                        ListFooterComponent={<View style={{marginBottom:120}}/>}
+                        ListFooterComponent={<View style={{ marginBottom: 120 }} />}
                     />
                 </SafeAreaView>
             }
@@ -397,7 +393,7 @@ const Stores = ({navigation}) => {
 }
 
 /* STYLES */
-            
+
 const styles = StyleSheet.create({
 
     categoryListText: {
@@ -410,8 +406,8 @@ const styles = StyleSheet.create({
         color: COLORS.darkGreen,
         borderBottomWidth: 2,
         paddingBottom: 5,
-        borderTopLeftRadius:5,
-        borderTopRightRadius:5,
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
     },
     categoryListContainer: {
         flexDirection: 'row',
@@ -421,24 +417,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         paddingVertical: 20,
     },
-    visitedTab : {
+    visitedTab: {
         marginLeft: 20
     },
     item: {
-        margin: 20 ,
-        textAlign:'center',
+        margin: 20,
+        textAlign: 'center',
     },
     itemPhoto: {
-      width: 100,
-      height: 100,
-      borderRadius: 50
+        width: 100,
+        height: 100,
+        borderRadius: 50
     },
     itemText: {
-      color: COLORS.black,
-      flexDirection:'row',
-      textAlign:'center',
-      marginTop: 15,
-      fontSize: 18,
+        color: COLORS.black,
+        flexDirection: 'row',
+        textAlign: 'center',
+        marginTop: 15,
+        fontSize: 18,
     },
     container: {
         flex: 1,

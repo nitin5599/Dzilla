@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react'
-import { 
+import {
     View,
     Text,
     TouchableOpacity,
@@ -15,40 +15,43 @@ import { CategoryCard } from "../components";
 import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from '@react-navigation/native';
 
 const wishlist = () => {
-    
-    const [isLoading, setLoading] = useState(false);
+
+    const [isLoading, setLoading] = useState(true);
     const [datalist, setDataList] = useState([]);
 
-    const fetchData = async() => {        
+    const fetchData = async() => {
         try {
             const myArray = await AsyncStorage.getItem('wishlist');
             if (myArray !== null) {
               // We have data!!
               setDataList(JSON.parse(myArray))
               console.log('wishlist products - ',JSON.parse(myArray));
+              setLoading(false)
+
             }
           } catch (error) {
             console.log(error)
+
             // Error retrieving data
-        }    
+        }
     }
 
     useEffect(async() => {
-        setLoading(true)
         fetchData()
-        setLoading(false)
-    }, [])    
+    }, [useIsFocused()])
 
     const renderItem = ({item, index}) => {
         return (
-            datalist.length > 0 ? 
+            datalist.length > 0 ?
                 <CategoryCard
                     containerStyle={{
                         marginHorizontal: SIZES.padding,
                     }}
                     categoryItem={item}
+                    wishlist={true}
                     key={index}
                     onPress={() => navigation.navigate('gotostore', {storeImage: item.fileName})}
                 /> :
@@ -62,9 +65,9 @@ const wishlist = () => {
     }
 
     const [refreshing, setRefreshing] = useState(false);
-    
+
     const wait = (timeout) => {
-        return new Promise(resolve => setTimeout(resolve, timeout));        
+        return new Promise(resolve => setTimeout(resolve, timeout));
     }
 
     const onRefresh = React.useCallback(() => {
@@ -75,11 +78,11 @@ const wishlist = () => {
 
     return (
         <>
-            { isLoading 
+            { isLoading
                 ?
-                <ActivityIndicator style={{flex: 1,justifyContent:'center'}} 
+                <ActivityIndicator style={{flex: 1,justifyContent:'center'}}
                     size="small" color="#0000ff" />
-                :         
+                :
                 <SafeAreaView
                     style={{
                         flex:1,
@@ -96,12 +99,12 @@ const wishlist = () => {
                         data={datalist}
                         keyExtractor={item => item.id}
                         ListHeaderComponent={
-                            <View 
+                            <View
                                 style={{
                                     marginTop:20,
                                 }}
                             >
-                                <Text 
+                                <Text
                                     style={{
                                         marginHorizontal: 15,
                                         textAlign:'center',
