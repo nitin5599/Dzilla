@@ -12,42 +12,54 @@ import {
 
 import { COLORS, icons, images, FONTS, SIZES, dummyData } from "../constants"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
+const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
     
     const [isFav, setIsFav] = useState(false)
     const [cart, setCart] = useState([])
-
+    useEffect(() => {
+        console.log('present in wishlist - ', wishlist._W)
+        console.log(categoryItem)
+        let arr = []
+        arr.push(categoryItem)
+        console.log(arr)
+        arr.map((itm, index) => {
+            itm.isFav = wishlist._W
+            return {...itm}
+        })
+        console.log('arr data -> ', arr)
+    }, [])
     const onTapAddToWishlist = async(item) => {
-        // addToWishList(movie)
-        setIsFav(!isFav)
-    
-        if(isFav){
-            let newCart = [...cart]
-            newCart.push(item);
-            setCart(newCart)
-            try {
-                await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
-            } 
-            catch (error) {
-                // Error saving data
-                console.log(error)
-            }
+        // const newitem = {
+        //     isFav: !isFav,
+        //     ...item
+        // }
+        // console.log(newitem)
+        // if(newitem.isFav === true){
+        //     let newCart = []
+        //     newCart.push(newitem);
+        //     setCart(newCart)
+        //     try {
+        //         await AsyncStorage.setItem('wishlist', JSON.stringify(cart));
+        //     } 
+        //     catch (error) {
+        //         console.log(error)
+        //     }
             
-            try {
-            const myArray = await AsyncStorage.getItem('wishlist');
-                if (myArray !== null) {
-                    // We have data!!
-                    console.log(JSON.parse(myArray));
-                }
-                } catch (error) {
-                console.log(error)
-                // Error retrieving data
-            }    
-        }
-        else{
-            console.log('no fav')
-        }
+        //     try {
+        //         const myArray = await AsyncStorage.getItem('wishlist');
+        //         if (myArray !== null) {
+        //             console.log(JSON.parse(myArray));
+        //         }
+        //     } catch (error) {
+        //         console.log(error)
+        //     }    
+        // }
+        // else{
+        //     console.log('no fav')
+        // }
+        // setIsFav(!isFav)        
     }
+
     return (
         <TouchableOpacity
             key={categoryItem._id}
@@ -140,7 +152,6 @@ const CategoryCard = ({containerStyle, categoryItem, onPress}) => {
                     alignItems: 'flex-start'
                 }}>  
                 <TouchableOpacity
-                    // onPress={()=>setIsFav(!isFav)}
                     onPress={() => onTapAddToWishlist(categoryItem)}
                 >
                     <Image source={isFav ? icons.heartFilled : icons.heart} 

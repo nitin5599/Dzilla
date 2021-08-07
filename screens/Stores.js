@@ -17,6 +17,7 @@ import {
 import { COLORS, icons, images, FONTS, SIZES } from "../constants"
 import { CategoryCard, TrendingCard,  } from "../components";
 import { trendingOffers } from '../constants/trendingOffers'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stores = ({navigation}) => {
     
@@ -295,6 +296,24 @@ const Stores = ({navigation}) => {
         )
     }
 
+    const checkWishlist= async (item)=>{
+        try {
+            let allproducts = [];
+            const arr = await AsyncStorage.getItem('wishlist');
+            allproducts=[...JSON.parse(arr)];
+            console.log('wishlist - ',allproducts)
+            for (let index = 0; index < allproducts.length; index++) {
+                if(allproducts[index]._id === item._id) 
+                   return true
+            }
+            return false;
+            // const res = [...allproducts.filter((e) => e._id === item._id)]
+            // console.log(item.name, '=>', res)
+        } catch (error) {
+            console.log('wishlist error - ',error)
+        }        
+    }
+
     const renderItem = ({item, index}) => {
         return (
             datalist.length > 0 ? 
@@ -303,6 +322,7 @@ const Stores = ({navigation}) => {
                         marginHorizontal: SIZES.padding,
                     }}
                     categoryItem={item}
+                    wishlist={checkWishlist(item)}
                     key={index}
                     onPress={() => navigation.navigate('gotostore', {storeImage: item.fileName})}
                 /> :

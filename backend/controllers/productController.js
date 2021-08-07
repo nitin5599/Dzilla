@@ -22,7 +22,8 @@ const createProduct = async (req, res) => {
       description,
       cashback,
       fileName:productImage,
-      status: 'All'
+      status: 'All',
+      fav: false
    })
    product.save().then(()=>{
          res.json({

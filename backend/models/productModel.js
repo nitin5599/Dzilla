@@ -21,6 +21,9 @@ const productSchema = new mongoose.Schema({
     },
     status:{
         type: String
+    },
+    fav:{
+        type: Boolean
     }
 }, { timestamps: true });
 
