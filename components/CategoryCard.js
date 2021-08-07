@@ -19,14 +19,14 @@ const CategoryCard = ({containerStyle, categoryItem, onPress, wishlist}) => {
     useEffect(() => {
         console.log('present in wishlist - ', wishlist._W)
         console.log(categoryItem)
-        let arr = []
-        arr.push(categoryItem)
-        console.log(arr)
-        arr.map((itm, index) => {
-            itm.isFav = wishlist._W
-            return {...itm}
-        })
-        console.log('arr data -> ', arr)
+        // let arr = []
+        // arr.push(categoryItem)
+        // console.log(arr)
+        // arr.map((itm, index) => {
+        //     itm.isFav = wishlist._W
+        //     return {...itm}
+        // })
+        // console.log('arr data -> ', arr)
     }, [])
     const onTapAddToWishlist = async(item) => {
         // const newitem = {

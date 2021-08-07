@@ -297,21 +297,29 @@ const Stores = ({navigation}) => {
     }
 
     const checkWishlist= async (item)=>{
+        console.log('item - ', item)
         try {
-            let allproducts = [];
-            const arr = await AsyncStorage.getItem('wishlist');
-            allproducts=[...JSON.parse(arr)];
-            console.log('wishlist - ',allproducts)
-            for (let index = 0; index < allproducts.length; index++) {
-                if(allproducts[index]._id === item._id) 
-                   return true
-            }
-            return false;
+            if(item._id == '60ffdafc5220aa00040b2642')
+            {
+                let pro = [];
+                pro.push(item);
+                AsyncStorage.setItem('wishlist', pro);
+            }    
+            // let allproducts = [];
+            // const arr = await AsyncStorage.getItem('wishlist');
+            // allproducts=[...JSON.parse(arr)];
+            // console.log('wishlist - ',allproducts)
+            // for (let index = 0; index < allproducts.length; index++) {
+            //     if(allproducts[index]._id === item._id) 
+            //        return true
+            // }
+            // return false;
             // const res = [...allproducts.filter((e) => e._id === item._id)]
             // console.log(item.name, '=>', res)
         } catch (error) {
             console.log('wishlist error - ',error)
         }        
+        return true;
     }
 
     const renderItem = ({item, index}) => {
