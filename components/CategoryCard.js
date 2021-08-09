@@ -63,9 +63,9 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
                 resizeMode='contain'
 
                 style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: SIZES.radius
+                    width: 60,
+                    height: 60,
+                    // borderRadius: SIZES.radius
                 }}
             />
 
