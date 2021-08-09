@@ -34,8 +34,8 @@ const GoToStore = ({navigation, route}) => {
              marginHorizontal: SIZES.padding * 6 }}>
                 <TouchableOpacity
                     style={{
-                        height: 60,
-                        width: 180,
+                        height: 50,
+                        width: 150,
                         backgroundColor: COLORS.black,
                         borderRadius: SIZES.radius / 1.5,
                         alignItems: 'center',
@@ -43,7 +43,7 @@ const GoToStore = ({navigation, route}) => {
                     }}
                 >
                     <Text 
-                        style={{ color: COLORS.white, ...FONTS.body2 , 
+                        style={{ color: COLORS.white, ...FONTS.body4 , 
                         textTransform:'uppercase'}}
                         onPress={() => navigation.navigate('webView', {userid: id, token: token})}
                     >
@@ -60,9 +60,9 @@ const GoToStore = ({navigation, route}) => {
             <Image 
                 source={{uri: storeImage}} 
                 style={{
-                    height: 150,
-                    width:150,
-                    borderRadius:80
+                    height: 100,
+                    width:100,
+                    // borderRadius:80
                 }}                    
                 resizeMode="contain"
                 
@@ -76,7 +76,7 @@ const GoToStore = ({navigation, route}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1, 
-    //   backgroundColor: '#fdeb93',
+      backgroundColor: 'white',
       alignItems: 'center', 
       justifyContent: 'center',
       textAlign:'center'
