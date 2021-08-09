@@ -109,9 +109,10 @@ const TrendingCard = ({containerStyle, recipeItem, onPress}) => {
                 source={recipeItem.image}
                 resizeMode='contain'
                 style={{
-                    height:280,
-                    width:180,
-                    marginTop: 20
+                    height:240,
+                    width:140,
+                    marginTop: 10,
+                    marginHorizontal: 10
                 }}
             />
         </>

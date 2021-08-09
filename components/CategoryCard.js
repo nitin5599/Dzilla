@@ -63,8 +63,8 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
                 resizeMode='contain'
 
                 style={{
-                    width: 100,
-                    height: 100,
+                    width: 70,
+                    height: 70,
                     borderRadius: SIZES.radius
                 }}
             />
@@ -81,8 +81,8 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
                 {/* Name */}
                 <Text
                     style={{
-                        // flex:1,
-                        ...FONTS.h3
+                        ...FONTS.h4,
+                        fontSize:14
                     }}
                 >
                     {categoryItem.name}
@@ -94,7 +94,7 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
                     numberOfLines={2}
                     style={{
                         color: COLORS.lightGray2,
-                        ...FONTS.body4,
+                        ...FONTS.body5,
 
                     }}
                 >
@@ -106,13 +106,14 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
 
             <View
                 style={{
-                    width: '20%',
-                    alignItems: 'flex-start'
+                    width: '25%',
+                    alignItems: 'flex-start',
                 }}
             >
                 <Text
                     style={{
-                        ...FONTS.h3
+                        ...FONTS.h4,
+                        fontSize:14,
                     }}
                 >
                     {categoryItem.cashback + '%'}
@@ -121,7 +122,7 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress, wishlist, onChang
                 <Text
                     style={{
                         color: COLORS.lightGray2,
-                        ...FONTS.body4
+                        ...FONTS.body5
                     }}
                 >
                     cashback

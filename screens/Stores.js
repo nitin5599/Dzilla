@@ -102,9 +102,8 @@ const Stores = ({ navigation }) => {
                     <Image
                         source={icons.wishlist}
                         style={{
-                            width: 40,
-                            height: 40,
-                            // borderRadius:20
+                            width: 30,
+                            height: 30
                         }}
                     />
                 </TouchableOpacity>
@@ -117,19 +116,19 @@ const Stores = ({ navigation }) => {
             <View
                 style={{
                     flexDirection: 'row',
-                    height: 50,
+                    height: 40,
                     alignItems: 'center',
                     marginHorizontal: SIZES.padding,
                     paddingHorizontal: SIZES.radius,
                     borderRadius: 10,
-                    backgroundColor: COLORS.lightGray
+                    backgroundColor: '#edf1f7'
                 }}
             >
                 <Image
                     source={icons.search}
                     style={{
-                        width: 20,
-                        height: 20,
+                        width: 15,
+                        height: 15,
                         tintColor: COLORS.gray
                     }}
                 />
@@ -137,7 +136,7 @@ const Stores = ({ navigation }) => {
                 <TextInput
                     style={{
                         marginLeft: SIZES.radius * 4,
-                        ...FONTS.body2
+                        ...FONTS.body4
                     }}
                     placeholderTextColor={COLORS.gray}
                     placeholder="Search for a shop"
@@ -150,13 +149,13 @@ const Stores = ({ navigation }) => {
         return (
             <View
                 style={{
-                    marginTop: 20,
+                    marginTop: 15,
                 }}
             >
                 <Text
                     style={{
                         marginHorizontal: 15,
-                        ...FONTS.h2
+                        ...FONTS.h4
                     }}
                 >Trending Offers</Text>
 
@@ -223,13 +222,13 @@ const Stores = ({ navigation }) => {
         return (
             <View
                 style={{
-                    marginTop: 20,
+                    marginTop: 0,
                 }}
             >
                 <Text
                     style={{
                         marginHorizontal: 18,
-                        ...FONTS.h2
+                        ...FONTS.h4
                     }}
                 >Categories</Text>
 
@@ -365,9 +364,9 @@ const Stores = ({ navigation }) => {
                             <View>
                                 {renderHeader()}
 
-                                {/* {renderCategories()} */}
+                                {renderCategories()}
 
-                                {/* {renderTrendingSection()} */}
+                                {renderTrendingSection()}
 
                                 {/* {ListCategories()} */}
                                 <View style={{
@@ -376,7 +375,7 @@ const Stores = ({ navigation }) => {
                                     <Text
                                         style={{
                                             marginHorizontal: 15,
-                                            ...FONTS.h2
+                                            ...FONTS.h4
                                         }}
                                     >Show Now</Text>
                                 </View>
@@ -421,12 +420,12 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     item: {
-        margin: 20,
+        margin: 15,
         textAlign: 'center',
     },
     itemPhoto: {
-        width: 100,
-        height: 100,
+        width: 90,
+        height: 90,
         borderRadius: 50
     },
     itemText: {
@@ -434,7 +433,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         textAlign: 'center',
         marginTop: 15,
-        fontSize: 18,
+        fontSize: 12
     },
     container: {
         flex: 1,

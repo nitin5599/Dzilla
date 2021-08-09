@@ -4,11 +4,7 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom-tabs"
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
-import Svg, { Path } from 'react-native-svg';
-import { isIphoneX } from 'react-native-iphone-x-helper';
+import { createBottomTabNavigator} from "@react-navigation/bottom-tabs"
 
 import { Stores, Invite, Account } from "../screens"
 
@@ -28,9 +24,9 @@ const Tabs = () => {
                     bottom: 0,
                     right: 0,
                     elevation:0,
-                    borderTopColor: 'transparent',
+                    borderTopColor:'transparent',
                     backgroundColor: COLORS.white,
-                    height: 100
+                    height: 60
                 }
             }}
         >

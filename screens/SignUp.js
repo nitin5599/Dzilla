@@ -152,7 +152,7 @@ const SignUp = ({navigation}) => {
                             borderBottomWidth: 1,
                             height: 40,
                             color: COLORS.black,
-                            ...FONTS.body3
+                            ...FONTS.body4
                         }}
                         placeholder="Enter Name"
                         placeholderTextColor={COLORS.black}
@@ -173,7 +173,7 @@ const SignUp = ({navigation}) => {
                             borderBottomWidth: 1,
                             height: 40,
                             color: COLORS.black,
-                            ...FONTS.body3
+                            ...FONTS.body4
                         }}
                         placeholder="Enter email"
                         placeholderTextColor={COLORS.black}
@@ -194,7 +194,7 @@ const SignUp = ({navigation}) => {
                             borderBottomWidth: 1,
                             height: 40,
                             color: COLORS.black,
-                            ...FONTS.body3
+                            ...FONTS.body4
                         }}
                         placeholder="Enter Password"
                         placeholderTextColor={COLORS.black}
@@ -231,18 +231,18 @@ const SignUp = ({navigation}) => {
     function renderButton() {
         return (
             <View style={{marginVertical: SIZES.padding * 3,
-             marginHorizontal: SIZES.padding * 6}}>
+             marginHorizontal: SIZES.padding * 7}}>
                 <TouchableOpacity
                     onPress={submitHandler} 
                     style={{
-                        height: 60,
+                        height: 50,
                         backgroundColor: COLORS.black,
                         borderRadius: SIZES.radius / 1.5,
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
                 >
-                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>
+                    <Text style={{ color: COLORS.white, ...FONTS.h4 }}>
                     {loading ? <ActivityIndicator size="small" color="#fff" /> 
                         : 'Continue'}
                     </Text>
@@ -270,7 +270,7 @@ const SignUp = ({navigation}) => {
                         }}
                         onPress={() => navigation.navigate("Login")}
                     >
-                        <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Already a user? Login</Text>
+                        <Text style={{ color: COLORS.black, ...FONTS.body4 }}>Already a user? Login</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>}

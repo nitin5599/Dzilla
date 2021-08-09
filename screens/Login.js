@@ -114,7 +114,7 @@ const Login = ({navigation}) => {
                             borderBottomWidth: 1,
                             height: 40,
                             color: COLORS.black,
-                            ...FONTS.body3
+                            ...FONTS.body4
                         }}
                         placeholder="Enter email"
                         placeholderTextColor={COLORS.black}
@@ -135,7 +135,7 @@ const Login = ({navigation}) => {
                             borderBottomWidth: 1,
                             height: 40,
                             color: COLORS.black,
-                            ...FONTS.body3
+                            ...FONTS.body4
                         }}
                         placeholder="Enter Password"
                         placeholderTextColor={COLORS.black}
@@ -172,18 +172,18 @@ const Login = ({navigation}) => {
     function renderButton() {
         return (
             <View style={{ margin: SIZES.padding * 4,
-             marginHorizontal: SIZES.padding * 6 }}>
+             marginHorizontal: SIZES.padding * 7 }}>
                 <TouchableOpacity
                     onPress={submitHandler}
                     style={{
-                        height: 60,
+                        height: 50,
                         backgroundColor: COLORS.black,
                         borderRadius: SIZES.radius / 1.5,
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
                 >
-                    <Text style={{ color: COLORS.white, ...FONTS.h3 }}>
+                    <Text style={{ color: COLORS.white, ...FONTS.h4 }}>
                         {isLoading ? 
                             <ActivityIndicator size="small" color="#fff" /> 
                             : 'Login'}
@@ -196,7 +196,7 @@ const Login = ({navigation}) => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
-            style={{ flex: 1 }}
+            style={{ flex: 1 , backgroundColor:'white'}}
         >
                 <ScrollView>
                     {renderLogo()}
@@ -210,7 +210,7 @@ const Login = ({navigation}) => {
                             }}
                             onPress={() => navigation.navigate("SignUp")}
                         >
-                            <Text style={{ color: COLORS.black, ...FONTS.h4 }}>Not a member? Sign Up</Text>
+                            <Text style={{ color: COLORS.black, ...FONTS.body4 }}>Not a member? Sign Up</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

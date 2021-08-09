@@ -19,10 +19,11 @@ import { useIsFocused } from '@react-navigation/native';
 
 const wishlist = () => {
 
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(false);
     const [datalist, setDataList] = useState([]);
 
     const fetchData = async() => {
+        setLoading(true)
         try {
             const myArray = await AsyncStorage.getItem('wishlist');
             if (myArray !== null) {
@@ -30,13 +31,13 @@ const wishlist = () => {
               setDataList(JSON.parse(myArray))
               console.log('wishlist products - ',JSON.parse(myArray));
               setLoading(false)
-
             }
           } catch (error) {
+            // Error handling   
             console.log(error)
-
-            // Error retrieving data
+            setLoading(false)
         }
+        setLoading(false)
     }
 
     useEffect(async() => {
@@ -111,7 +112,7 @@ const wishlist = () => {
                                     style={{
                                         marginHorizontal: 15,
                                         textAlign:'center',
-                                        ...FONTS.h2
+                                        ...FONTS.h4
                                     }}
                                 >My Wishlist</Text>
                             </View>

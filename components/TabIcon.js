@@ -8,21 +8,21 @@ const TabIcon = ({focused, icon, name}) => {
             style={{
                 alignItems:'center',
                 justifyContent:'center',
-                height:80,
-                width:55
+                height:60,
+                width:60
             }}
         >
             <Image
                 source={icon}
                 resizeMode='contain'
                 style={{
-                    width:30,
-                    height:30,
+                    width:20,
+                    height:20,
                     tintColor: focused ? COLORS.darkGreen 
                     : COLORS.black
                 }}
             />
-            <Text>{name}</Text>
+            <Text style={{fontSize:12}}>{name}</Text>
 
             { focused && 
                 <View

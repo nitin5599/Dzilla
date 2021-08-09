@@ -29,13 +29,6 @@ const Account = ({navigation}) => {
     }, [useIsFocused()]);
 
     const getData = async() => {
-        // try {
-        //     const jsonValue = await AsyncStorage.getItem('UserData')
-        //     // return jsonValue != null ? JSON.parse(jsonValue) : null;
-        //     console.log(jsonValue != null ? JSON.parse(jsonValue) : null)
-        // } catch (error) {
-        //     console.log(error)
-        // }
         try {
             const jsonValue = await AsyncStorage.getItem('UserData')
                 if (jsonValue !==null) {
@@ -78,57 +71,19 @@ const Account = ({navigation}) => {
     
     const wait = (timeout) => {
         // return getUpdatedData()
-        return new Promise(resolve => setTimeout(resolve, timeout));
-        
+        return new Promise(resolve => setTimeout(resolve, timeout));        
     }
     
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(async() => {
         setRefreshing(true);
-        // getData()
         fetch('https://dzilla.herokuapp.com/api/users/')
         .then(response => 
             // response.json()
             console.log(response)
-            // {
-            //     response.data.map((currentuser) => 
-            //         currentuser.email === email ? setName(currentuser.name) : ''
-            //     )                
-            //     let localuserdata = {
-            //         name: response.data.name,
-            //         email: response.data.email,
-            //         pic: response.data.pic,
-            //         wallet: response.data.wallet
-            //     }
-            //     console.log('localuserdata-', localuserdata)
-            // }
         )
-        // .then((json) => {
-        //     setDataList(json)
-        //     console.log('Product api Response - ', json)
-        //     // ListCategories()
-        //     setLoading(false)
-        // })
         .catch((error) => console.error(error))
-        // axios.get('https://dzilla.herokuapp.com/api/users/')
-        //     .then(response => {
-                // response.data.map((currentuser) => 
-                //     currentuser.email === email ? setName(currentuser.name) : ''
-                // )                
-                // let localuserdata = {
-                //     name: name,
-                //     email: email,
-                //     pic: pic,
-
-                // };
-        //         // console.log(localuserdata)
-        //         AsyncStorage.setItem('UserData', JSON.stringify(localuserdata));
-        //         // navigation.navigate('Stores')
-        //     })
-        //     .catch((error) => {
-        //         console.log('ERROR - ', error);
-        //     })  
         wait(2000).then(() => setRefreshing(false));
     }, []);
     
@@ -144,40 +99,30 @@ const Account = ({navigation}) => {
         >
             <View style={styles.userInfoSection} >
                 <View style={{flexDirection: 'row', marginTop: 15}}>
-                <Avatar.Image 
-                    source={{uri: pic}}
-                    size={80}
-                />
-                <View style={{marginLeft: 20}}>
-                    <Title 
-                        style={[
-                            styles.title,
-                            {
-                                marginTop:25,
-                                marginBottom: 0,
-                            }
-                        ]}
-                    >{name}</Title>
-                    {/* <Caption style={styles.caption}>@nitin_55</Caption> */}
-                </View>
+                    <Avatar.Image 
+                        source={{uri: pic}}
+                        size={45}
+                    />
+                    <View style={{marginLeft: 20}}>
+                        <Title 
+                            style={[
+                                styles.title,
+                                {
+                                    marginTop:8,
+                                    marginBottom: 0,
+                                }
+                            ]}
+                        >{name}</Title>
+                        {/* <Caption style={styles.caption}>@nitin_55</Caption> */}
+                    </View>
                 </View>
             </View>
 
             <View style={styles.userInfoSection}>
                 
-                {/* <View style={styles.row}>
-                    <Image source={icons.location} style={{width:25, height:25}}/>
-                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>Kishangarh, India</Text>
-                </View> */}
-                
-                {/* <View style={styles.row}>
-                    <Image source={icons.phone} style={{width:25, height:25}}/>
-                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>+91-9602996383</Text>
-                </View> */}
-                
                 <View style={styles.row}>
-                    <Image source={icons.mail} style={{width:25, height:25}}/>
-                    <Text style={{color:"#000", marginLeft: 20, fontSize: 16}}>{email}</Text>
+                    <Image source={icons.mail} style={{width:20, height:20}}/>
+                    <Text style={styles.menuItemText}>{email}</Text>
                 </View>
 
             </View>
@@ -193,13 +138,13 @@ const Account = ({navigation}) => {
                         }
                     ]}
                 >
-                    <Title>₹{wallet}</Title>
-                    <Caption style={{fontSize: 16}}>Wallet</Caption>
+                    <Title style={{fontSize: 18}}>₹{wallet}</Title>
+                    <Caption style={{fontSize: 12}}>Wallet</Caption>
                 </View>
 
                 <View style={styles.infoBox}>
-                    <Title>12</Title>
-                    <Caption style={{fontSize: 16}}>Orders</Caption>
+                    <Title style={{fontSize: 18}}>12</Title>
+                    <Caption style={{fontSize: 12}}>Orders</Caption>
                 </View>
             
             </View>
@@ -208,42 +153,42 @@ const Account = ({navigation}) => {
 
                 <TouchableRipple onPress={() => console.log('something')}>
                     <View style={styles.menuItem}>
-                        <Image source={icons.heart} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.heart} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={styles.menuItemText}>Your Favorites</Text>
                     </View>
                 </TouchableRipple>
             
                 <TouchableRipple onPress={() => console.log('something')}>
                     <View style={styles.menuItem}>
-                        <Image source={icons.wallet} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.wallet} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={styles.menuItemText}>Payment</Text>
                     </View>
                 </TouchableRipple>
             
                 <TouchableRipple onPress={() => myCustomShare()}>
                     <View style={styles.menuItem}>
-                        <Image source={icons.share} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.share} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={styles.menuItemText}>Tell Your Friends</Text>
                     </View>
                 </TouchableRipple>
             
                 <TouchableRipple onPress={() => console.log('something')}>
                     <View style={styles.menuItem}>
-                        <Image source={icons.support} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.support} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={styles.menuItemText}>Support</Text>
                     </View>
                 </TouchableRipple>
             
                 <TouchableRipple onPress={() => console.log('something')}>
                     <View style={[styles.menuItem, {paddingHorizontal: 30}]}>
-                        <Image source={icons.settings} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.settings} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={[styles.menuItemText, {paddingHorizontal: 0}]}>Settings</Text>
                     </View>
                 </TouchableRipple>
                 
                 <TouchableRipple onPress={handleLogout}>
                     <View style={[styles.menuItem, {paddingHorizontal: 30}]}>
-                        <Image source={icons.logout} color="#FF6347" style={{width:25, height:25}}/>
+                        <Image source={icons.logout} color="#FF6347" style={{width:20, height:20}}/>
                         <Text style={[styles.menuItemText, {paddingHorizontal: 0}]}>Logout</Text>
                     </View>
                 </TouchableRipple>
@@ -263,21 +208,21 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff9e8'
     },
     userInfoSection: {
-      paddingHorizontal: 30,
+      paddingHorizontal: 25,
       marginBottom: 25,
     },
     title: {
-      fontSize: 24,
+      fontSize: 18,
       fontWeight: 'bold',
     },
-    caption: {
-      fontSize: 14,
-      lineHeight: 14,
-      fontWeight: '500',
-    },
+    // caption: {
+    //   fontSize: 14,
+    //   lineHeight: 14,
+    //   fontWeight: '500',
+    // },
     row: {
       flexDirection: 'row',
-      marginBottom: 10,
+    //   marginBottom: 15,
     },
     infoBoxWrapper: {
       borderBottomColor: '#dddddd',
@@ -304,8 +249,7 @@ const styles = StyleSheet.create({
       color: '#000',
       marginLeft: 20,
       fontWeight: '600',
-      fontSize: 18,
-      lineHeight: 26,
+      fontSize: 12,
     },
 });
 
